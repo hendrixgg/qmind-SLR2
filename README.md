@@ -7,6 +7,7 @@
 - Liam Salass
 - Noah Waisbrod
 - Hendrix Gryspeerdt
+    - First year engineering student
 
 ### The Dataset
 
