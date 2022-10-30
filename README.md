@@ -4,6 +4,7 @@
 ### Meet The Team
 - Matthew Li
 - Sammi Wang
+    - 4th year Cognitive Science student
 - Liam Salass
 - Noah Waisbrod
 - Hendrix Gryspeerdt
