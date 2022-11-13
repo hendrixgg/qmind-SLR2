@@ -5,14 +5,16 @@ import numpy as np
 
 #------------------(Functions)----------------------#
 
-#greyscale images func
-
+#greyscale images func Input(img.jpg) --> output(img.jpg)
+def greyScale(img):
+    return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 #ScreenGrab an image from video
 
 
 #Create folder and add images to it
-
+def saveImg(name : np.ndarray):
+    
 
 #video Feed
 def openVideo():
