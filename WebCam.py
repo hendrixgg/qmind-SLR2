@@ -12,8 +12,8 @@ def greyScale(img):
 #ScreenGrab an image from video
 
 
-#Create folder to save images to
-def saveImg(letter: chr):
+#Create folder to save images to and saves directory
+def createDir(letter: chr):
     #get directory of python file and add directory of the letter folder
     dir = os.getcwd()
     newDir = "LetterData\\" + letter
@@ -25,29 +25,30 @@ def saveImg(letter: chr):
             os.makedirs(dir)
     except OSError:
         print("Error creating directory" + dir)
-
-
     
-
-
-    
+    return dir
 
 #video Feed
-def openVideo():
+def openVideo(path : str, scTime : int):
     #open webcam and show in folder
     vid = cv2.VideoCapture(0)
-  
+    imgCnt = 0
+    timmer = 0
     while(True):
-      
+        timmer += 1
         # Capture the video frame
         ret, frame = vid.read()
   
         # Display the resulting frame
         cv2.imshow('frame', frame)
       
-        # to exit program 'q'
+        # hotkey assignment
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+        elif timmer%scTime == 0:
+            imgName = "{}.png".format(imgCnt)
+            cv2.imwrite(os.path.join(path, imgName),frame)
+            imgCnt += 1
   
     # After the loop release the cap object
     vid.release()
@@ -56,5 +57,5 @@ def openVideo():
     cv2.destroyAllWindows()
 
 #--------------------(Main)-------------------------#
-saveImg('a')
-openVideo()
+dir = createDir('a')
+openVideo(dir, 150)
