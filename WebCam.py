@@ -12,8 +12,24 @@ def greyScale(img):
 #ScreenGrab an image from video
 
 
-#Create folder and add images to it
-def saveImg(name : np.ndarray):
+#Create folder to save images to
+def saveImg(letter: chr):
+    #get directory of python file and add directory of the letter folder
+    dir = os.getcwd()
+    newDir = "LetterData\\" + letter
+    dir = os.path.join(dir, newDir)
+
+    #try creating the folder if it doent already exist
+    try:
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+    except OSError:
+        print("Error creating directory" + dir)
+
+
+    
+
+
     
 
 #video Feed
@@ -40,4 +56,5 @@ def openVideo():
     cv2.destroyAllWindows()
 
 #--------------------(Main)-------------------------#
+saveImg('a')
 openVideo()
