@@ -12,7 +12,7 @@ test_labels, test_images = test_set['label'].values, np.reshape(test_set.iloc[:,
 img = train_images[0]
 
 # ROTATION #
-rotated_img = ndimage.rotate(img, angle=45, reshape=False)
+rotated_img = ndimage.rotate(img, angle=45, reshape=False, cval=1.0)
 
 # BLUR #
 blurred_img = ndimage.gaussian_filter(img, sigma=1)
