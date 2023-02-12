@@ -1,8 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import pandas as pd
 from process_image import rescale_image
-import matplotlib.pyplot as plt
 
 model = tf.keras.models.load_model('mnist_handsigns/saved_model/my_model')
 
@@ -29,6 +27,8 @@ def predict_file(img_path: str):
 
 #--------------------(Main)-------------------------#
 def main():
+    import pandas as pd
+    import matplotlib.pyplot as plt
     # import test data
     test_set = pd.read_csv('mnist_handsigns/sign_mnist_test.csv')
 
