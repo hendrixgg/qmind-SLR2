@@ -19,7 +19,7 @@ def predict(img):
     if not isinstance(img, np.ndarray) or img.shape != (28, 28):
         print("error in image prediction")
         return "ERROR"
-    return get_label(np.argmax(model.predict(np.asarray([img]))))
+    return get_label(np.argmax(model.predict(np.asarray([img]), verbose=0)))
 
 # takes an unformatted cv2 image and predicts the ASL handsign in it 
 def predict_unformatted(img):
