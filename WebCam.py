@@ -57,5 +57,9 @@ def openVideo(path : str, scTime : int):
     cv2.destroyAllWindows()
 
 #--------------------(Main)-------------------------#
-dir = createDir('a')
-openVideo(dir, 150)
+def main():    
+    dir = createDir('c')
+    openVideo(dir, 150)
+
+if __name__ == "__main__":
+    main()
