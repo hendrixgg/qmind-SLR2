@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from process_image import rescale_image
+from process_image import rescale_image, rescale_image_from_file
 
 model = tf.keras.models.load_model('mnist_handsigns/saved_model/my_model')
 
@@ -21,9 +21,13 @@ def predict(img):
         return "ERROR"
     return get_label(np.argmax(model.predict(np.asarray([img]))))
 
+# takes an unformatted cv2 image and predicts the ASL handsign in it 
+def predict_unformatted(img):
+    return predict(rescale_image(img))
+
 # takes a path to an image file (png or file readable by cv2)
 def predict_file(img_path: str):
-    return predict(rescale_image(img_path))
+    return predict(rescale_image_from_file(img_path))
 
 #--------------------(Main)-------------------------#
 def main():
@@ -46,8 +50,8 @@ def main():
 
     print("raw image of a C:")
     label = 'C'
-    raw_img = rescale_image("LetterData/c/c0.png")
-    print(f"{label=} {predict(raw_img)}")
+    raw_img = rescale_image_from_file("LetterData/c/c0.png")
+    print(f"{label=} {predict(raw_img)=}")
 
     # showing the images
 
