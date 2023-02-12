@@ -2,6 +2,7 @@
 import os
 import cv2
 import numpy as np
+import test_model
 
 #------------------(Functions)----------------------#
 
@@ -29,7 +30,9 @@ def createDir(letter: chr):
     return dir
 
 #video Feed
-def openVideo(path : str, scTime : int):
+# if path == "" or scTime == 0 then frames will not be saved
+def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
+    capture_mode = False if path == "" or scTime == 0 else True
     #open webcam and show in folder
     vid = cv2.VideoCapture(0)
     imgCnt = 0
@@ -38,14 +41,18 @@ def openVideo(path : str, scTime : int):
         timmer += 1
         # Capture the video frame
         ret, frame = vid.read()
-  
+
+        # predict the current letter
+        prediction = f"predicted letter: {test_model.predict_unformatted(frame)}" if make_predictions else "?"
+
         # Display the resulting frame
         cv2.imshow('frame', frame)
-      
+        cv2.displayOverlay('frame', f"predicted letter: {prediction}")
+
         # hotkey assignment
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        elif timmer%scTime == 0:
+        elif capture_mode and timmer % scTime == 0:
             imgName = "{}.png".format(imgCnt)
             cv2.imwrite(os.path.join(path, imgName),frame)
             imgCnt += 1
