@@ -66,7 +66,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 #--------------------(Main)-------------------------#
 def main():    
     dir = createDir('c')
-    openVideo(dir, 150)
+    openVideo(dir, 150, make_predictions=False)
 
 if __name__ == "__main__":
     main()
