@@ -22,7 +22,8 @@ def predict(img):
         return "ERROR"
     return get_label(np.argmax(model.predict(np.asarray([img]), verbose=0)))
 
-# takes an unformatted cv2 image and predicts the ASL handsign in it 
+# takes an unformatted cv2 image and predicts the ASL handsign in it
+# ASSUMES THE IMAGE HAS PIXEL VALUES FROM 0-255
 def predict_unformatted(img):
     return predict(rescale_image(img))
 
