@@ -8,7 +8,7 @@ show a different ASL handsign to see if the model will predict correctly
 
 (letters J and Z won't work because they require gestures and the model has only been trained on still images)
 
-Finally press q to quit
+Finally, press q to quit
 
 """
 WebCam.openVideo()
