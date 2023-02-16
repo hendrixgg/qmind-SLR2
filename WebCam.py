@@ -1,7 +1,6 @@
 #Import Lib
 import os
 import cv2
-import numpy as np
 import test_model
 
 #------------------(Functions)----------------------#
@@ -43,17 +42,24 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         ret, frame = vid.read()
 
         # predict the current letter
-        prediction = f"predicted letter: {test_model.predict_unformatted(frame)}" if make_predictions else "?"
+        prediction = test_model.predict_unformatted(frame) if make_predictions else "?"
+        # this should do more than just predict the current letter, should return the top 3 viable letters
+        # also, the raw model output vector should be run through the "sliding window" function to determine if a gesture has been shown for long enough to be considered
+        # if there has been low confidence in gestures, treat the situation as a "transition between gestures" and perhaps add the previouly predicted letter to a string to record the interpretations
+        # if a "transition" was the previous "letter" do not add anything to the string recording the interpretation
+        # to make the framerate not be so slow, could find a way to make this asyncronus, tie this functionality to an object and call a get_prediction method to retrieve the letters to be shown in the cv2.displayOverlay. If this can't be done right, leave it as is.
 
         # Display the resulting frame
         cv2.imshow('frame', frame)
         cv2.displayOverlay('frame', f"predicted letter: {prediction}")
+        # the overlay could include more information
+        # the openVideo function could take in some more parameters, giving the option to show more data on overlay
 
         # hotkey assignment
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         elif capture_mode and timmer % scTime == 0:
-            imgName = "{}.png".format(imgCnt)
+            imgName = f"{imgCnt}.png"
             cv2.imwrite(os.path.join(path, imgName),frame)
             imgCnt += 1
   
