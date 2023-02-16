@@ -16,6 +16,7 @@ def get_label(integer_value):
 
 # Takes a (28, 28) numpy array with values 0-1 and returns the letter predicted
 def predict(img):
+    # there may be a better way to do this check. could take a look at the model.predict documentation.
     if not isinstance(img, np.ndarray) or img.shape != (28, 28):
         print("error in image prediction")
         return "ERROR"
