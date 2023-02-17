@@ -13,6 +13,7 @@
 ### Required Libraries
 
 - openCV
+- MediaPipe
 - numpy
 - pandas
 - process_image
