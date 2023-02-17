@@ -10,6 +10,17 @@
 - Hendrix Gryspeerdt
     - First year engineering student
 
+### Required Libraries
+
+- openCV
+- numpy
+- pandas
+- process_image
+- scipy
+- matplotlib
+- seaborn
+- TensorFlow
+
 ### The Dataset
 
 ### The Model
