@@ -2,7 +2,7 @@
 import os
 import cv2
 import test_model
-
+import live_predictor
 #------------------(Functions)----------------------#
 
 #greyscale images func Input(img.jpg) --> output(img.jpg)
@@ -32,6 +32,7 @@ def createDir(letter: chr):
 # if path == "" or scTime == 0 then frames will not be saved
 def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
     capture_mode = False if path == "" or scTime == 0 else True
+    rolling_prediction = live_predictor.rolling_sum(buffer_size=15)
     #open webcam and show in folder
     vid = cv2.VideoCapture(0)
     imgCnt = 0
@@ -42,7 +43,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         ret, frame = vid.read()
 
         # predict the current letter
-        prediction = test_model.predict_unformatted(frame) if make_predictions else "?"
+        rolling_prediction.add_vector(test_model.predict_unformatted(frame))
         # this should do more than just predict the current letter, should return the top 3 viable letters
         # also, the raw model output vector should be run through the "sliding window" function to determine if a gesture has been shown for long enough to be considered
         # if there has been low confidence in gestures, treat the situation as a "transition between gestures" and perhaps add the previouly predicted letter to a string to record the interpretations
@@ -51,7 +52,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
         # Display the resulting frame
         cv2.imshow('frame', frame)
-        cv2.displayOverlay('frame', f"predicted letter: {prediction}")
+        cv2.displayOverlay('frame', f"predicted letter: ?")
         # the overlay could include more information
         # the openVideo function could take in some more parameters, giving the option to show more data on overlay
 
