@@ -4,11 +4,11 @@ import cv2
 
 #------------------(Functions)----------------------#
 
-# ROTATION #
+# testing ROTATION #
 def rotate_image(img, angle):
     return ndimage.rotate(img, angle=angle, reshape=False, cval=1.0)
 
-# BLUR #
+# testing BLUR #
 def blur_image(img, blur_amount):
     return ndimage.gaussian_filter(img, sigma=blur_amount)
 
