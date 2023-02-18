@@ -20,7 +20,7 @@ def predict(img):
     if not isinstance(img, np.ndarray) or img.shape != (28, 28):
         print("error in image prediction")
         return "ERROR"
-    return model.predict(np.asarray([img]), verbose=0)
+    return model.predict(np.asarray([img]), verbose=0)[0]
 
 # takes an unformatted cv2 image and predicts the ASL handsign in it
 # ASSUMES THE IMAGE HAS PIXEL VALUES FROM 0-255
@@ -48,12 +48,12 @@ def main():
     # test the model
     print("test_imgs[0]:")
     label = chr(ord('A') + test_labels[0])
-    print(f"{label=} {predict(test_imgs[0])[0]=}")
+    print(f"{label=} {predict(test_imgs[0])=}")
 
     print("raw image of a C:")
     label = 'C'
     raw_img = rescale_image_from_file("LetterData/c/c0.png")
-    print(f"{label=} {predict(raw_img)[0]=}")
+    print(f"{label=} {predict(raw_img)=}")
 
     # showing the images
 
