@@ -9,13 +9,33 @@ class rolling_sum():
     
     # vector should be a numpy array
     def add_vector(self, vector):
-        if self.sum == None:
+        if not isinstance(self.sum, np.ndarray):
             self.sum = vector
+        else:
+            self.sum = np.add(self.sum, vector)
         while len(self.queue) >= self.buffer_size:
-            self.sum -= self.queue.pop(0)
-        self.sum += vector
+            self.sum = np.subtract(self.sum, self.queue.pop(0))
         self.queue.append(vector)
         
-    # not finished, should return a dictionary of (index, percentage)
+    # returns a list of (index, percentage) of the higest confidence predictions
     def get_confidences(self, top_n=3):
-        return self.sum[0:top_n] / np.sum(self.sum)
+        # gets the indexes of the top n confidences in the self.sum vector
+        top_indexes = np.argpartition(self.sum, -top_n)[-top_n:]
+        # sorts the indexes of the confidences in order of increasing confidence value
+        top_indexes = top_indexes[np.argsort(self.sum[top_indexes])]
+        
+        return [(i, self.sum[i]) for i in reversed(top_indexes)]
+
+# def main():
+#     sliding_window = rolling_sum()
+
+#     sliding_window.add_vector(np.asarray([1.5, 2.1, 5, 3, 2]))
+#     print(sliding_window.get_confidences(3))
+
+#     sliding_window.add_vector(np.asarray([6.5, 1.1, 0.3, -1.2, 2.6]))
+#     print(sliding_window.get_confidences(3))
+
+#     print(sliding_window.sum)
+
+# if __name__ == "__main__":
+#     main()
