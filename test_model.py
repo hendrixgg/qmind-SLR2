@@ -48,12 +48,12 @@ def main():
     # test the model
     print("test_imgs[0]:")
     label = chr(ord('A') + test_labels[0])
-    print(f"{label=} {predict(test_imgs[0])=}")
+    print(f"{label=} {predict(test_imgs[0])[0]=}")
 
     print("raw image of a C:")
     label = 'C'
     raw_img = rescale_image_from_file("LetterData/c/c0.png")
-    print(f"{label=} {predict(raw_img)=}")
+    print(f"{label=} {predict(raw_img)[0]=}")
 
     # showing the images
 
