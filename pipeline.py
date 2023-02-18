@@ -127,7 +127,7 @@ class cnn_tf:
             print("Accuracy of the model is - " , model.evaluate(self.test_set,self.test_labels)[1]*100 , "%")
             
             # Save the entire model as a SavedModel.
-            model.save('new_model/asl_model2')
+            model.save('models/asl_model2')
             
         except:
             print ('Error in cnn_model1')
