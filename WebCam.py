@@ -46,11 +46,9 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         rolling_prediction.add_vector(test_model.predict_unformatted(frame))
         # get the top 3 predictions
         predictions = [(test_model.get_label(i), c) for (i, c) in rolling_prediction.get_confidences(3)]
-        # this should do more than just predict the current letter, should return the top 3 viable letters
-        # also, the raw model output vector should be run through the "sliding window" function to determine if a gesture has been shown for long enough to be considered
         # if there has been low confidence in gestures, treat the situation as a "transition between gestures" and perhaps add the previouly predicted letter to a string to record the interpretations
         # if a "transition" was the previous "letter" do not add anything to the string recording the interpretation
-        # to make the framerate not be so slow, could find a way to make this asyncronus, tie this functionality to an object and call a get_prediction method to retrieve the letters to be shown in the cv2.displayOverlay. If this can't be done right, leave it as is.
+        # to make the framerate not be so slow, could find a way to make this asyncronus
 
         # Display the resulting frame
         cv2.imshow('frame', frame)
