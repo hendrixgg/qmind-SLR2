@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 from process_image import rescale_image, rescale_image_from_file
 
-model = tf.keras.models.load_model('mnist_handsigns/saved_model/ASL_model1')
+model = tf.keras.models.load_model('models/ASL_model1')
 
 #------------------(Functions)----------------------#
 
