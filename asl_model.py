@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 from process_image import rescale_image, rescale_image_from_file
 
-model = tf.keras.models.load_model('models/ASL_model1')
+model = tf.keras.models.load_model('models/asl_model2')
 
 # prints the model architecture summary
 def model_summary():
@@ -10,10 +10,11 @@ def model_summary():
 
 # returns the letter label for a model output value
 def get_label(integer_value):
-    return chr(ord('A') + integer_value)
+    label = ord('A') + integer_value
+    return chr(label) if label < ord('J') else chr(label + 1)
 
 # Takes a (28, 28) numpy array with values 0-1 and returns the model output vector
-# output has shape (, 25), one entry for the confidence of each letter's prediction
+# output has shape (, 24), one entry for the confidence of each letter's prediction
 def predict(img):
     # there may be a better way to do this check. could take a look at the model.predict documentation.
     if not isinstance(img, np.ndarray) or img.shape != (28, 28):
