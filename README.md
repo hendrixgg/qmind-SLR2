@@ -46,7 +46,7 @@ Datageneration was applied to the training set, resulting in added cases with bl
 - Convelutional 2D with rectified linear Unit activation function (ReLU)
 - Batch Normalization layer (For re-centering and re-scalling)
 - 2D Max Pool to downsize output
-- 2nd Convelutional 2D 
+- 2nd Convelutional 2D
 
 ```
 model = Sequential()

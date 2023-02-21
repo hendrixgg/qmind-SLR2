@@ -17,7 +17,7 @@ class rolling_sum():
             self.sum = np.subtract(self.sum, self.queue.pop(0))
         self.queue.append(vector)
         
-    # returns a list of (index, percentage) of the higest confidence predictions
+    # returns a list of (index, confidence) of the higest confidence predictions
     def get_confidences(self, top_n=3):
         # gets the indexes of the top n confidences in the self.sum vector
         top_indexes = np.argpartition(self.sum, -top_n)[-top_n:]
