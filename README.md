@@ -42,12 +42,24 @@ Datageneration was applied to the training set, resulting in added cases with bl
 - The model was sequential due to the simplistic predictions being made. 
 
 #### Model Structure:
+Learning rate reduction schedule using reduce on plateu in order dynamically adjust learning rate during training when model prediction accuracy has minimal change between epochs. 
 
-- Convelutional 2D with rectified linear Unit activation function (ReLU)
-- Batch Normalization layer (For re-centering and re-scalling)
-- 2D Max Pool to downsize output
-- 2nd Convelutional 2D
-
+1.  Convelutional 2D with rectified linear Unit activation function (ReLU)
+2.  Batch Normalization layer (For re-centering and re-scalling)
+3.  2D Max Pool to downsize output\
+4.  2nd Convelutional 2D with ReLU activation function 
+5.  Dropout layer to avoid overfitting and weaken neurons
+6.  2nd Batch Normalization layer
+7.  2nd 2D Max Pool 
+8.  3rd Convelutional 2D with ReLU
+9.  3rd Batch Normalization Layer
+10. 3rd 2D Max Pool
+11. Flatten layer to create linear vector output of data
+12. Dense layer to classify output of convelutional layers (ReLU activation function)
+13. 2nd Droupout layer
+14. 2nd Dense layer (softmax activation function)
+15. Adam compiler
+ 
 
 ### Next Steps
 
