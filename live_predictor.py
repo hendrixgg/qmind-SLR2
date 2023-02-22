@@ -23,8 +23,8 @@ class rolling_sum():
         top_indexes = np.argpartition(self.sum, -top_n)[-top_n:]
         # sorts the indexes of the confidences in order of increasing confidence value
         top_indexes = top_indexes[np.argsort(self.sum[top_indexes])]
-        
-        return [(i, self.sum[i]) for i in reversed(top_indexes)]
+        total = np.sum(self.sum)
+        return [(i, self.sum[i] / total) for i in reversed(top_indexes)]
 
 # def main():
 #     sliding_window = rolling_sum()
