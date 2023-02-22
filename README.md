@@ -46,7 +46,7 @@ Learning rate reduction schedule using reduce on plateu in order dynamically adj
 
 1.  Convelutional 2D with rectified linear Unit activation function (ReLU)
 2.  Batch Normalization layer (For re-centering and re-scalling)
-3.  2D Max Pool to downsize output\
+3.  2D Max Pool to downsize output
 4.  2nd Convelutional 2D with ReLU activation function 
 5.  Dropout layer to avoid overfitting and weaken neurons
 6.  2nd Batch Normalization layer
