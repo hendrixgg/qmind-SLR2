@@ -82,9 +82,10 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
             cropped = frame
 
         # predict the current letter
-        rolling_prediction.add_vector(asl_model.predict_unformatted(cropped))
+        if make_predictions:
+            rolling_prediction.add_vector(asl_model.predict_unformatted(cropped))
         # get the top 3 predictions
-        predictions = [(asl_model.get_label(i), c) for (i, c) in rolling_prediction.get_confidences(3)]
+        predictions = [(asl_model.get_label(i), c) for (i, c) in rolling_prediction.get_confidences(3)] if make_predictions else "?"
         # if there has been low confidence in gestures, treat the situation as a "transition between gestures" and perhaps add the previouly predicted letter to a string to record the interpretations
         # if a "transition" was the previous "letter" do not add anything to the string recording the interpretation
         # to make the framerate not be so slow, could find a way to make this asyncronus
