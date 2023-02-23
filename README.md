@@ -71,8 +71,10 @@ Learning rate reduction schedule using reduce on plateu in order dynamically adj
  
 
 ### Next Steps
+#### Short term:
 - Liam:
-  - Retrain model for compressed hands 
+  - Retrain model for square hands 
+  - Increase model accuracy across the board
   - Get Demo.py to work
 - Sammi:
   - Fix webcam text display to work (either create new window for predictions or add area below window)
@@ -80,4 +82,8 @@ Learning rate reduction schedule using reduce on plateu in order dynamically adj
   - Poster Board for Cucai
 - Hendrix:
   - Cropped images to be square
+  - Stringing together words from predictions
+
+#### Long Term:
+
   
