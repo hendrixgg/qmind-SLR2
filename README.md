@@ -74,16 +74,21 @@ Learning rate reduction schedule using reduce on plateu in order dynamically adj
 #### Short term:
 - Liam:
   - Retrain model for square hands 
+  - Look into finding handsign data set with hand lines drawn
+  - Higher resolution dataset with dataset 
   - Increase model accuracy across the board
+  - Get overlay to work with hand landmarks
   - Get Demo.py to work
 - Sammi:
   - Fix webcam text display to work (either create new window for predictions or add area below window)
   - Fix Sammi's ability to push/pull with repository
   - Add no hand detected mode 
   - Poster Board for Cucai
+  - Add in key to turn on and off handlines
 - Hendrix:
   - Cropped images to be square
   - Stringing together words from predictions
+  - Figure out what background will be used 
 
 #### Long Term:
 
