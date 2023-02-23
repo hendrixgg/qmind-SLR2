@@ -74,6 +74,8 @@ Learning rate reduction schedule using reduce on plateu in order dynamically adj
 #### Short term:
 - Liam:
   - Retrain model for square hands 
+  - Look into finding handsign data set with hand lines drawn
+  - Higher resolution dataset with dataset 
   - Increase model accuracy across the board
   - Get Demo.py to work
 - Sammi:
