@@ -71,7 +71,13 @@ Learning rate reduction schedule using reduce on plateu in order dynamically adj
  
 
 ### Next Steps
-
-- Implement contol logic to chain together multiple live camera predictions to create words.
-- Create a cropping method to isolate hands in video frame
-- Test new models with transitioning gestures and implement J and Z
+- Liam:
+  - Retrain model for compressed hands 
+  - Get Demo.py to work
+- Sammi:
+  - Fix webcam text display to work (either create new window for predictions or add area below window)
+  - Fix Sammi's ability to push/pull with repository
+  - Poster Board for Cucai
+- Hendrix:
+  - Cropped images to be square
+  
