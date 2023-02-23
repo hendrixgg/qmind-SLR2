@@ -90,9 +90,10 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         # if a "transition" was the previous "letter" do not add anything to the string recording the interpretation
         # to make the framerate not be so slow, could find a way to make this asyncronus
 
+        cv2.putText(frame, f"predicted letter: {predictions}",(50,50),cv2.FONT_HERSHEY_SIMPLEX,1,(209,80,0,255),3)
         # Display the resulting frame
         cv2.imshow('frame', frame)
-        cv2.displayOverlay('frame', f"predicted letter: {predictions}")
+        #cv2.displayOverlay('frame', f"predicted letter: {predictions}")
         # the overlay could include more information
         # the openVideo function could take in some more parameters, giving the option to show more data on overlay
 
