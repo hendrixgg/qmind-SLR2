@@ -79,6 +79,7 @@ Learning rate reduction schedule using reduce on plateu in order dynamically adj
 - Sammi:
   - Fix webcam text display to work (either create new window for predictions or add area below window)
   - Fix Sammi's ability to push/pull with repository
+  - Add no hand detected mode 
   - Poster Board for Cucai
 - Hendrix:
   - Cropped images to be square
