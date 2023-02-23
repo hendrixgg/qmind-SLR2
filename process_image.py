@@ -15,7 +15,7 @@ def blur_image(img, blur_amount):
 # Rescale image to grayscale numpy array (28, 28, 1) with values 0 to 1
 # ASSUMING THE PIXEL VALUES ARE FROM 0-255 IN THE FIRST PLACE
 def rescale_image(img):
-    return np.asarray(cv2.resize(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), dsize=(28, 28), interpolation=cv2.INTER_CUBIC)) / 255.
+    return np.asarray(cv2.resize(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), dsize=(28, 28), interpolation=cv2.INTER_CUBIC)) / 255.0
 
 def rescale_image_from_file(img_path):
     return rescale_image(cv2.imread(img_path))
