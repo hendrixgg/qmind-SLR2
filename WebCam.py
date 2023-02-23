@@ -83,7 +83,11 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
         # predict the current letter
         if make_predictions:
-            rolling_prediction.add_vector(asl_model.predict_unformatted(cropped))
+            try:
+                rolling_prediction.add_vector(asl_model.predict_unformatted(cropped))
+            except:
+                print(f"{cropped}, {cropped.shape=}")
+                exit(0)
         # get the top 3 predictions
             predictions = [(asl_model.get_label(i), c) for (i, c) in rolling_prediction.get_confidences(3)]
         else:
