@@ -21,6 +21,7 @@
 - matplotlib
 - seaborn
 - TensorFlow
+- pip
 
 ### The Dataset
 
