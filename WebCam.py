@@ -42,7 +42,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
     #open webcam and show in folder
     cap = cv2.VideoCapture(0)
     ret, frame = cap.read()
-    h,w,_ = frame.shape
+    h, w, _ = frame.shape
 
     imgCnt = 0
     timmer = 0
@@ -83,9 +83,15 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
         # predict the current letter
         if make_predictions:
-            rolling_prediction.add_vector(asl_model.predict_unformatted(cropped))
+            try:
+                rolling_prediction.add_vector(asl_model.predict_unformatted(cropped))
+            except:
+                print(f"{cropped}, {cropped.shape=}")
+                exit(0)
         # get the top 3 predictions
-        predictions = [(asl_model.get_label(i), c) for (i, c) in rolling_prediction.get_confidences(3)] if make_predictions else "?"
+            predictions = [(asl_model.get_label(i), c) for (i, c) in rolling_prediction.get_confidences(3)]
+        else:
+            predictions = "?"
         # if there has been low confidence in gestures, treat the situation as a "transition between gestures" and perhaps add the previouly predicted letter to a string to record the interpretations
         # if a "transition" was the previous "letter" do not add anything to the string recording the interpretation
         # to make the framerate not be so slow, could find a way to make this asyncronus
