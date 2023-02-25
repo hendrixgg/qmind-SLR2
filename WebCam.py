@@ -52,7 +52,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         # Capture the video frame
         ret, frame = cap.read()
         framergb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        
+
         # Get the hand landmarks
         hand_landmarks = hands.process(framergb).multi_hand_landmarks
 
@@ -71,13 +71,13 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
                     if y < y_min:
                         y_min = y
 
-                #turn this statement on to show the display of landmarks
-                mp.solutions.drawing_utils.draw_landmarks(frame, handLMs, mphands.HAND_CONNECTIONS)
 
-        # cropped the video frame according to the bounding box
+        # crop the video frame according to the bounding box
         if y_min < y_max and x_min < x_max:
             cropped = frame[y_min-50:y_max+30, x_min-50:x_max+30]
             cv2.rectangle(frame, (x_min-50, y_min-50), (x_max+30, y_max+30), (0, 255, 0), 2)
+            # turn this statement on to show the display of landmarks
+            # mp.solutions.drawing_utils.draw_landmarks(frame, handLMs, mphands.HAND_CONNECTIONS)
         else:
             cropped = frame
 
