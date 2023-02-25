@@ -12,8 +12,6 @@ mp_drawing = mp.solutions.drawing_utils
 def greyScale(img):
     return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-#ScreenGrab an image from video
-
 #Create folder to save images to and saves directory
 def createDir(letter: chr):
     #get directory of python file and add directory of the letter folder
@@ -35,7 +33,11 @@ def createDir(letter: chr):
 # if path == "" or scTime == 0 then frames will not be saved
 def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
     capture_mode = False if path == "" or scTime == 0 else True
+
+    # logic for live language recognition
     rolling_prediction = live_predictor.rolling_sum(buffer_size=15)
+    text_prediction = live_predictor.text_builder(time_interval=500)
+
 
     # hand bounding box utility
     hands = mp_hands.Hands(max_num_hands=1)
@@ -93,8 +95,14 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
                 print(f"({x_min}, {y_min}), ({x_max}, {y_max})")
                 print(f"{cropped}, {cropped.shape=}")
                 exit(0)
-        # get the top 3 predictions
+            # get the top 3 predictions
             predictions = [(asl_model.get_label(i), c) for (i, c) in rolling_prediction.get_confidences(3)]
+            # build text
+            text_prediction.update(predictions[0][0])
+            # print text to console
+            os.system("cls")
+            print("current text:")
+            print(text_prediction.string)
         else:
             predictions = "?"
         # if there has been low confidence in gestures, treat the situation as a "transition between gestures" and perhaps add the previouly predicted letter to a string to record the interpretations

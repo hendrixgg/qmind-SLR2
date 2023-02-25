@@ -26,6 +26,44 @@ class rolling_sum():
         total = np.sum(self.sum)
         return [(i, self.sum[i] / total) for i in reversed(top_indexes)]
 
+class live_state():
+    # init_state must be comparable, time_interval is in milliseconds
+    def __init__(self, init_state=None, time_interval: int=500):
+        self.curr_time = time.time_ns()
+        self.curr_state = init_state
+        self.time_interval = time_interval * 1_000_000
+
+    # return value: (True if time_interval has elapsed), prev_state
+    def update(self, new_state):
+        new_time = time.time_ns()
+        prev_state = self.curr_state
+        elapsed = (new_time - self.curr_time >= self.time_interval)
+        if elapsed or self.curr_state != new_state:
+            self.curr_state = new_state
+            self.curr_time = new_time
+        return elapsed, prev_state
+
+
+# uses the live state class to take input
+# only adds a charater to the string when the input_state changes
+class text_builder():
+    def __init__(self, init_letter: str='', time_interval: int=500):
+        self.input_state = live_state(init_letter, time_interval)
+        self.string = ""
+        self.prev_letter = init_letter
+
+    # updates the string if the input triggers an update
+    # updates are triggered if the input changes
+    # returns True if updated, otherwise False
+    def update(self, letter_input):
+        should_update, letter = self.input.update(letter_input)
+        if should_update and self.prev_letter != letter:
+            self.string += letter
+            self.prev_letter = letter
+            return True
+        return False        
+
+
 # def main():
 #     sliding_window = rolling_sum()
 
