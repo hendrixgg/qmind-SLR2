@@ -56,7 +56,7 @@ class text_builder():
     # updates are triggered if the input changes
     # returns True if updated, otherwise False
     def update(self, letter_input):
-        should_update, letter = self.input.update(letter_input)
+        should_update, letter = self.input_state.update(letter_input)
         if should_update and self.prev_letter != letter:
             self.string += letter
             self.prev_letter = letter
