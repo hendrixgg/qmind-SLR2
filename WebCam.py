@@ -35,11 +35,11 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
     capture_mode = False if path == "" or scTime == 0 else True
     rolling_prediction = live_predictor.rolling_sum(buffer_size=15)
 
-    mp_drawing = mp.solutions.drawing_utils
+    # hand bounding box utility
     mphands = mp.solutions.hands
     hands = mphands.Hands()
     
-    #open webcam and show in folder
+    # open webcam
     cap = cv2.VideoCapture(0)
     ret, frame = cap.read()
     h, w, _ = frame.shape
@@ -52,9 +52,9 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         # Capture the video frame
         ret, frame = cap.read()
         framergb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        
         # Get the hand landmarks
-        result = hands.process(framergb)
-        hand_landmarks = result.multi_hand_landmarks
+        hand_landmarks = hands.process(framergb).multi_hand_landmarks
 
         x_min, y_min, x_max, y_max = w,h,0,0
         # Iterate through the hand landmarks to get the boundaries for bounding box
@@ -70,14 +70,14 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
                         y_max = y
                     if y < y_min:
                         y_min = y
-                cv2.rectangle(frame, (x_min-50, y_min-50), (x_max+30, y_max+30), (0, 255, 0), 2)
 
                 #turn this statement on to show the display of landmarks
-                #mp_drawing.draw_landmarks(frame, handLMs, mphands.HAND_CONNECTIONS)
+                mp.solutions.drawing_utils.draw_landmarks(frame, handLMs, mphands.HAND_CONNECTIONS)
 
         # cropped the video frame according to the bounding box
-        if y_min <= y_max and x_min <= x_max:
+        if y_min < y_max and x_min < x_max:
             cropped = frame[y_min-50:y_max+30, x_min-50:x_max+30]
+            cv2.rectangle(frame, (x_min-50, y_min-50), (x_max+30, y_max+30), (0, 255, 0), 2)
         else:
             cropped = frame
 
@@ -86,6 +86,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
             try:
                 rolling_prediction.add_vector(asl_model.predict_unformatted(cropped))
             except:
+                print(f"({x_min}, {y_min}), ({x_max}, {y_max})")
                 print(f"{cropped}, {cropped.shape=}")
                 exit(0)
         # get the top 3 predictions
