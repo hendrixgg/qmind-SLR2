@@ -4,6 +4,8 @@ import cv2
 import asl_model
 import live_predictor
 import mediapipe as mp
+mp_hands = mp.solutions.hands
+mp_drawing = mp.solutions.drawing_utils
 #------------------(Functions)----------------------#
 
 #greyscale images func Input(img.jpg) --> output(img.jpg)
@@ -36,8 +38,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
     rolling_prediction = live_predictor.rolling_sum(buffer_size=15)
 
     # hand bounding box utility
-    mphands = mp.solutions.hands
-    hands = mphands.Hands(max_num_hands=1)
+    hands = mp_hands.Hands(max_num_hands=1)
     
     # open webcam
     cap = cv2.VideoCapture(0)
@@ -50,11 +51,13 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
     while(True):
         timmer += 1
         # Capture the video frame
-        ret, frame = cap.read()
-        framergb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        success, frame = cap.read()
+        if not success:
+            print("ignoring empty camera frame.")
+            continue
 
         # Get the hand landmarks
-        hand_landmarks = hands.process(framergb).multi_hand_landmarks
+        hand_landmarks = hands.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).multi_hand_landmarks
 
         x_min, y_min, x_max, y_max = w,h,0,0
         # Iterate through the hand landmarks to get the boundaries for bounding box
@@ -75,9 +78,10 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         # crop the video frame according to the bounding box
         if y_min < y_max and x_min < x_max:
             cropped = frame[y_min-50:y_max+30, x_min-50:x_max+30]
+            # draw rectangle around hand bounding box
             cv2.rectangle(frame, (x_min-50, y_min-50), (x_max+30, y_max+30), (0, 255, 0), 2)
             # turn this statement on to show the display of landmarks
-            # mp.solutions.drawing_utils.draw_landmarks(frame, handLMs, mphands.HAND_CONNECTIONS)
+            # mp_drawing.draw_landmarks(frame, handLMs, mphands.HAND_CONNECTIONS)
         else:
             cropped = frame
 
