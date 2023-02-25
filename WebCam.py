@@ -37,7 +37,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
     # hand bounding box utility
     mphands = mp.solutions.hands
-    hands = mphands.Hands()
+    hands = mphands.Hands(max_num_hands=1)
     
     # open webcam
     cap = cv2.VideoCapture(0)
