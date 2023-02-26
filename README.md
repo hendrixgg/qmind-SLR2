@@ -6,6 +6,7 @@
 - Sammi Wang
     - 4th year Cognitive Science student
 - Liam Salass
+  - 3rd year computer engineering student
 - Noah Waisbrod
 - Hendrix Gryspeerdt
     - First year engineering student
