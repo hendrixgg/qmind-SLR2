@@ -76,15 +76,15 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
                     if y < y_min:
                         y_min = y
 
-
         # crop the video frame according to the bounding box
         if y_min < y_max and x_min < x_max:
             cropped = frame[y_min-50:y_max+30, x_min-50:x_max+30]
             # draw rectangle around hand bounding box
             cv2.rectangle(frame, (x_min-50, y_min-50), (x_max+30, y_max+30), (0, 255, 0), 2)
             # turn this statement on to show the display of landmarks
-            # mp_drawing.draw_landmarks(frame, handLMs, mphands.HAND_CONNECTIONS)
+            # mp_drawing.draw_landmarks(frame, handLMs, mp_hands.HAND_CONNECTIONS)
         else:
+            # should be: don't predict in this scenario
             cropped = frame
 
         # predict the current letter
