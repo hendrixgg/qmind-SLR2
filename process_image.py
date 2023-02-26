@@ -21,7 +21,34 @@ def rescale_image(img):
 def rescale_image_from_file(img_path):
     return rescale_image(cv2.imread(img_path))
 
+# cropping an image given a list of points with attributes .x, and .y
+# if cropp is outside of input image, fill out of bound pixels with fill_pixel
+def crop_square(img, points, pad_left=0, pad_right=0, pad_top=0, pad_bottom=0, fill_pixel=[255, 255, 255]):
+    top, bottom = (img.shape[1], img.shape[0]), (0, 0)
+    # find extreme points
+    for pt in points:
+        x, y = int(pt.x * img.shape[1]), int(pt.y * img.shape[0])
+        top = (min(top[0], x), min(top[1], y))
+        bottom = (max(bottom[0], x), max(bottom[1], y))
 
+    # pad into a square
+    w, h = bottom[0] - top[0], bottom[1] - top[1]
+    if w < h:
+        pad_left += (h - w) // 2
+        pad_right += (h - w) // 2
+    elif h < w:
+        pad_top += (w - h) // 2
+        pad_bottom += (w - h) // 2
+    # add padding
+    top = (top[0] - pad_left, top[1] - pad_top)
+    bottom = (bottom[0] + pad_right, bottom[1] + pad_bottom)
+    # create the empty cropped image
+    cropped = np.full((bottom[1] - top[1] + 1, bottom[0] - top[0] + 1, 3), np.asarray(fill_pixel, dtype=np.uint8))
+    # put in pixel values from input image
+    x_min, y_min, x_max, y_max = max(top[0], 1), max(top[1], 1), min(bottom[0], img.shape[1] - 1), min(bottom[1], img.shape[0] - 1)
+    cropped[y_min - top[1]:y_max - top[1] + 1, x_min - top[0]:x_max - top[0] + 1] = img[y_min:y_max + 1, x_min:x_max + 1]
+
+    return cropped, top, bottom
 #--------------------(Main)-------------------------#
 def main():
     import pandas as pd

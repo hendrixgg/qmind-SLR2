@@ -50,6 +50,8 @@ Datageneration was applied to the training set, resulting in added cases with bl
 - A learning rate reduction was used to slow the learning process and prevent overcorrections.
 - The model was sequential due to the simplistic predictions being made. 
 
+Model2.1 is a derivation of model2 with a lower accuracy on the dataset (89.76%), but has been trained on more blurred, flipped, and rotated images.  
+
 #### Model Structure:
 Learning rate reduction schedule using reduce on plateu in order dynamically adjust learning rate during training when model prediction accuracy has minimal change between epochs. 
 

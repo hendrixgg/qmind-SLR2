@@ -38,7 +38,8 @@ class rolling_sum():
 
 class live_state():
     # init_state must be comparable, time_interval is in milliseconds
-    def __init__(self, init_state=None, time_interval: int=500, repeat_interval: int=2000):
+    # if repeat is less than 0, repeats are not taken as inputs
+    def __init__(self, init_state=None, time_interval: int=500, repeat_interval: int=-1):
         self.curr_time = time.time_ns()
         self.curr_state = init_state
         self.time_interval = time_interval * 1_000_000
@@ -49,7 +50,7 @@ class live_state():
         new_time = time.time_ns()
         prev_state = self.curr_state
         elapsed = (new_time - self.curr_time >= self.time_interval and self.curr_state != new_state)
-        repeated = (new_time - self.curr_time >= self.repeat_interval and self.curr_state == new_state)
+        repeated = (self.repeat_interval > 0 and new_time - self.curr_time >= self.repeat_interval and self.curr_state == new_state)
         if elapsed or repeated:
             self.curr_state = new_state
             self.curr_time = new_time
@@ -60,7 +61,7 @@ class live_state():
 # only adds a charater to the string when the input_state changes
 # will add a repeat character if the time required for repeat to be inputted has elapsed
 class text_builder():
-    def __init__(self, init_letter: str='', time_interval: int=500, repeat_interval: int=2000):
+    def __init__(self, init_letter: str='', time_interval: int=500, repeat_interval: int=-1):
         self.input_state = live_state(init_letter, time_interval, repeat_interval)
         self.string = ""
         self.prev_letter = init_letter
