@@ -17,6 +17,7 @@ def blur_image(img, blur_amount):
 def rescale_image(img):
     return np.asarray(cv2.resize(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), dsize=(28, 28), interpolation=cv2.INTER_CUBIC)) / 255.0
 
+# Reads the image from the specified filepath, returns it after applying rescale_image
 def rescale_image_from_file(img_path):
     return rescale_image(cv2.imread(img_path))
 
