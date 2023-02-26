@@ -3,9 +3,11 @@ import os
 import cv2
 import asl_model
 import live_predictor
+import process_image
 import mediapipe as mp
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
+
 #------------------(Functions)----------------------#
 
 #greyscale images func Input(img.jpg) --> output(img.jpg)
@@ -36,7 +38,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
     # logic for live language recognition
     rolling_prediction = live_predictor.rolling_sum(buffer_size=15)
-    text_prediction = live_predictor.text_builder(time_interval=500)
+    text_prediction = live_predictor.text_builder(time_interval=500, repeat_interval=5_000)
 
 
     # hand bounding box utility
@@ -44,8 +46,6 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
     
     # open webcam
     cap = cv2.VideoCapture(0)
-    ret, frame = cap.read()
-    h, w, _ = frame.shape
 
     imgCnt = 0
     timmer = 0
@@ -61,46 +61,25 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         # Get the hand landmarks
         hand_landmarks = hands.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).multi_hand_landmarks
 
-        x_min, y_min, x_max, y_max = w,h,0,0
-        # Iterate through the hand landmarks to get the boundaries for bounding box
+        # Iterate through the hand landmarks to get the bounding box
         if hand_landmarks:
             # will only iterate once since only one hand is tracked at a time
             for handLMs in hand_landmarks:
-                for lm in handLMs.landmark:
-                    x, y = int(lm.x * w), int(lm.y * h)
-                    if x > x_max:
-                        x_max = x
-                    if x < x_min:
-                        x_min = x
-                    if y > y_max:
-                        y_max = y
-                    if y < y_min:
-                        y_min = y
+                cropped, top, bottom = process_image.crop_square(frame, handLMs.landmark, 40, 40, 40, 40)
+            cv2.imwrite("temp_img.png", cropped)
+            cv2.rectangle(frame, top, bottom, (0, 255, 0), 2)
+            # uncomment this line to display hand landmarks (joints)
+            mp_drawing.draw_landmarks(frame, handLMs, mp_hands.HAND_CONNECTIONS)
         else:
             # there is no hand in the frame
             # reset the rolling prediction
             rolling_prediction.reset()
             # treat the scenario as a space between words
             text_prediction.update(' ')
-        # obtain cropped video frame according to the bounding box
-        if y_min < y_max and x_min < x_max:
-            cropped = frame[y_min-50:y_max+30, x_min-50:x_max+30]
-            # draw rectangle around hand bounding box
-            cv2.rectangle(frame, (x_min-50, y_min-50), (x_max+30, y_max+30), (0, 255, 0), 2)
-            # turn this statement on to show the display of landmarks
-            # mp_drawing.draw_landmarks(frame, handLMs, mp_hands.HAND_CONNECTIONS)
-        else:
-            # should be: don't predict in this scenario
-            cropped = frame
 
         # predict the current letter
         if make_predictions and hand_landmarks:
-            try:
-                rolling_prediction.add_vector(asl_model.predict_unformatted(cropped))
-            except:
-                print(f"({x_min}, {y_min}), ({x_max}, {y_max})")
-                print(f"{cropped}, {cropped.shape=}")
-                break
+            rolling_prediction.add_vector(asl_model.predict_unformatted(cropped))
             # get the top 3 predictions
             predictions = [(asl_model.get_label(i), c) for (i, c) in rolling_prediction.get_confidences(3)]
             # add predicted letter to text input
@@ -113,6 +92,10 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
         # Display the resulting frame
         cv2.putText(frame, f"predicted letter: {predictions}", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (209,80,0,255), 3)
+        # if hand_landmarks:
+        #     cv2.rectangle(frame, top, bottom, (0, 255, 0), 2)
+        #     # uncomment this line to display hand landmarks (joints)
+        #     # mp_drawing.draw_landmarks(frame, handLMs, mp_hands.HAND_CONNECTIONS)
         cv2.imshow('frame', frame)
         # cv2.displayOverlay('frame', f"predicted letter: {predictions}")
         # the overlay could include more information
