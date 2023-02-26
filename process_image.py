@@ -31,7 +31,7 @@ def crop_square(img, points, pad_left=0, pad_right=0, pad_top=0, pad_bottom=0, f
         top = (min(top[0], x), min(top[1], y))
         bottom = (max(bottom[0], x), max(bottom[1], y))
 
-    # make into a square
+    # pad into a square
     w, h = bottom[0] - top[0], bottom[1] - top[1]
     if w < h:
         pad_left += (h - w) // 2

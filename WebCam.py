@@ -38,7 +38,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
     # logic for live language recognition
     rolling_prediction = live_predictor.rolling_sum(buffer_size=15)
-    text_prediction = live_predictor.text_builder(time_interval=500, repeat_interval=5_000)
+    text_prediction = live_predictor.text_builder(time_interval=500)
 
 
     # hand bounding box utility
