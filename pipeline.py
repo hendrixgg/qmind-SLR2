@@ -81,12 +81,12 @@ class cnn_tf:
                     featurewise_std_normalization=False,  # divide inputs by std of the dataset
                     samplewise_std_normalization=False,  # divide each input by its std
                     zca_whitening=False,  # apply ZCA whitening
-                    rotation_range=10,  # randomly rotate images in the range (degrees, 0 to 180)
-                    zoom_range = 0.1, # Randomly zoom image 
-                    width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
-                    height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
+                    rotation_range=50,  # randomly rotate images in the range (degrees, 0 to 180)
+                    zoom_range = 0.4, # Randomly zoom image 
+                    width_shift_range=0.3,  # randomly shift images horizontally (fraction of total width)
+                    height_shift_range=0.3,  # randomly shift images vertically (fraction of total height)
                     horizontal_flip=False,  # randomly flip images
-                    vertical_flip=False)  # randomly flip images
+                    vertical_flip=True)  # randomly flip images
             self.datagen.fit(self.train_set)
         except:
             print ('Error in preprocessing: Make sure two dataframes are entered before')
@@ -127,7 +127,7 @@ class cnn_tf:
             print("Accuracy of the model is - " , model.evaluate(self.test_set,self.test_labels)[1]*100 , "%")
             
             # Save the entire model as a SavedModel.
-            model.save('models/asl_model2')
+            model.save('models/asl_model2.1')
             
         except:
             print ('Error in cnn_model1')
