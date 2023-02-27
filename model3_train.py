@@ -131,7 +131,7 @@ class cnn:
             model.compile(optimizer = 'adam' , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
             model.summary()
 
-            model.fit(self.train_set, self.train_labels, batch_size = 128, epochs = 20, validation_data=0.1, callbacks = [learning_rate_reduction])
+            model.fit(self.train_set, self.train_labels, batch_size = 128, epochs = 20, validation_split=0.1, callbacks = [learning_rate_reduction])
             
             # Save the entire model as a SavedModel.
             model.save('models/asl_model3')
