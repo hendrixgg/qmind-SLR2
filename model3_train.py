@@ -109,7 +109,6 @@ class cnn:
         self.datagen.fit(self.train_set)
        
     def train_model(self):
-            img_size = 64
             #Training the model
             learning_rate_reduction = ReduceLROnPlateau(monitor='val_accuracy', patience = 2, verbose=1,factor=0.5, min_lr=0.00001)
 
