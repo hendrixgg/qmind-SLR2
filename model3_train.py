@@ -79,13 +79,18 @@ class cnn:
 
     def split_data(self):
         img_size = 64
-
+        x = []
+        y = []
         for features,label in self.data:
-            self.train_set = (features)
-            self.train_labels = (label)
+            x.append(features)
+            y.append(label)
 
-        self.train_set = np.array(self.train_set).reshape(-1,img_size,img_size,1)
+        self.train_set = np.array(x).reshape(-1,img_size,img_size,1)
         print (self.train_set[0])
+
+        self.train_labels = np.array(y)
+        label_bin = LabelBinarizer()
+        self.train_labels = label_bin.fit_transform(self.train_labels)
 
     def pre_process_data(self):
         self.train_set = self.train_set/255.0
@@ -128,7 +133,7 @@ class cnn:
             model.compile(optimizer = 'adam' , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
             model.summary()
 
-            history = model.fit(self.datagen.flow(self.train_set,self.train_labels, batch_size = 128) ,epochs = 20 , validation_split = 0.1 , callbacks = [learning_rate_reduction])
+            model.fit(self.train_set, self.train_labels, batch_size = 128, epochs = 20, validation_data=0.1, callbacks = [learning_rate_reduction])
             
             # Save the entire model as a SavedModel.
             model.save('models/asl_model3')
