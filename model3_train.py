@@ -81,16 +81,14 @@ class cnn:
         img_size = 64
         x = []
         y = []
-        for features,label in self.data:
+        for features, label in self.data:
             x.append(features)
             y.append(label)
 
         self.train_set = np.array(x).reshape(-1,img_size,img_size,1)
         print (self.train_set[0])
 
-        self.train_labels = np.array(y)
-        label_bin = LabelBinarizer()
-        self.train_labels = label_bin.fit_transform(self.train_labels)
+        self.train_labels = LabelBinarizer().fit_transform(np.array(y))
 
     def pre_process_data(self):
         self.train_set = self.train_set/255.0
@@ -102,7 +100,7 @@ class cnn:
                     featurewise_std_normalization=False,  # divide inputs by std of the dataset
                     samplewise_std_normalization=False,  # divide each input by its std
                     zca_whitening=False,  # apply ZCA whitening
-                    rotation_range=20,  # randomly rotate images in the range (degrees, 0 to 180)
+                    rotation_range=20,  # randomly rotate images in the range (degrees, 0 to 20)
                     zoom_range = 0.1, # Randomly zoom image 
                     width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
                     height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
@@ -116,7 +114,7 @@ class cnn:
             learning_rate_reduction = ReduceLROnPlateau(monitor='val_accuracy', patience = 2, verbose=1,factor=0.5, min_lr=0.00001)
 
             model = Sequential()
-            model.add(Conv2D(75 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu' , input_shape =self.train_set.shape[1:]))
+            model.add(Conv2D(75 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu' , input_shape=self.train_set.shape[1:]))
             model.add(BatchNormalization())
             model.add(MaxPool2D((2,2) , strides = 2 , padding = 'same'))
             model.add(Conv2D(50 , (3,3) , strides = 1 , padding = 'same' , activation = 'relu'))
