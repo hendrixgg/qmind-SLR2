@@ -32,5 +32,3 @@ def predict_unformatted(img):
 # takes a path to an image file (png or file readable by cv2)
 def predict_file(img_path: str):
     return predict(rescale_image_from_file(img_path, shape=input_shape))
-
-print(input_shape)
