@@ -103,6 +103,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
         # print text to console
         os.system("cls")
+        print(f"predicted letter: {predictions}")
         print("current text:\n", text_prediction.string)
 
         # hotkey assignment
