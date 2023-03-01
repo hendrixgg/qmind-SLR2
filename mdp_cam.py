@@ -5,25 +5,14 @@ import numpy as np
 import csv
 import live_predictor
 import mediapipe as mp
+import mdp_process
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
-def createDir(letter: chr):
-    #get directory of python file and add directory of the letter folder
-    dir = os.getcwd()
-    newDir = "LetterData\\" + letter
-    dir = os.path.join(dir, newDir)
-
-    #try creating the folder if it doent already exist
-    try:
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-    except OSError:
-        print("Error creating directory" + dir)
-    
-    return dir
-
+'''Takes camera input and write hand landmarks into a csv file, 
+each line represents a hand, with each list in a row represents a landmark. 
+Frames without a hand would be ignored, but hand can be partially covered and landmarks can be nan.'''
 
 def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
     capture_mode = False if path == "" or scTime == 0 else True
@@ -41,7 +30,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
     # open webcam
     cap = cv2.VideoCapture(0)
 
-    # hand bounding box utility
+    # hand landmarks utility
     with mp_hands.Hands(
         model_complexity = 0,
         max_num_hands = 1,
@@ -50,34 +39,18 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         while (True):
             timmer += 1
             sucess, image = cap.read()
-            ldm_data = []
+            ldm_data = np.empty((21,3))
+            
             if not sucess:
                 # there is no hand in the frame
                 # reset the rolling prediction
-                #rolling_prediction.reset()
+                rolling_prediction.reset()
                 # treat the scenario as a space between words
-                #text_prediction.update(' ')
+                text_prediction.update(' ')
                 print("empty frame")
                 continue
             else: 
-                results = hands.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-                if results.multi_hand_landmarks:
-                    for hand_landmarks in results.multi_hand_landmarks:
-                        mp_drawing.draw_landmarks(image,hand_landmarks,mp_hands.HAND_CONNECTIONS)
-                        ldm = np.array(hand_landmarks)
-                        ldm_data.append(ldm)
-            '''
-            image.flags.writable = False
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            results = hands.process(image)
-
-            #Draw the hand annotations on the image.
-            image.flags.writeable = True
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-            if results.multi_hand_landmarks:
-                for hand_landmarks in results.multi_hand_landmarks:
-                    mp_drawing.draw_landmarks(image,hand_landmarks,mp_hands.HAND_CONNECTIONS)
-            '''
+                ldm_data = mdp_process.imgToLdm(hands,image)
 
             cv2.imshow('frame', image)
 
@@ -85,7 +58,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
                 break
             elif capture_mode and timmer % scTime == 0:
                 writer.writerow(ldm_data)
-                ldm_data = []
+                ldm_data = np.empty((21,3))
                 imgCnt += 1
                 continue
 
@@ -95,7 +68,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
 #--------------------(Main)-------------------------#
 def main():
-    dir = createDir('mdp')
+    dir = mdp_process.createDir('mdp')
     openVideo(dir, 150, make_predictions=False)
 
 if __name__ == "__main__":
