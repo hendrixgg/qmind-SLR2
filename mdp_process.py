@@ -71,6 +71,7 @@ def main():
     train_file.close()
 
     cv2.destroyAllWindows()
+    #now we have KeyError: 'label' in train_raw['label'] ->indexer = self.columns.get_loc(key)
 
 if __name__ == "__main__":
     main()
