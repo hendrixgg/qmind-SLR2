@@ -58,6 +58,8 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
             print("ignoring empty camera frame.")
             continue
 
+        # frame -> top predictions, text
+
         # Get the hand landmarks
         hand_landmarks = hands.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).multi_hand_landmarks
 
@@ -81,9 +83,9 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         if make_predictions and hand_landmarks:
             rolling_prediction.add_vector(asl_model.predict_unformatted(cropped))
             # get the top 3 predictions
-            predictions = [(asl_model.get_label(i), c) for (i, c) in rolling_prediction.get_confidences(3)]
+            predictions = [(asl_model.get_label(i), c) for (i, c) in rolling_prediction.get_topn(3)]
             # add predicted letter to text input
-            text_prediction.update(predictions[0][0])
+            text_prediction.update(*predictions[0])
         else:
             predictions = "[not predicting]"
         # if there has been low confidence in gestures, treat the situation as a "transition between gestures" and perhaps add the previouly predicted letter to a string to record the interpretations

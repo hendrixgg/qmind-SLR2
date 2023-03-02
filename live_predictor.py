@@ -2,11 +2,13 @@ import numpy as np
 import time
 
 # the sum could be implemented as a priority queue for better performance
+# I am not sure if min_significance is the way to go
 class rolling_sum():
-    def __init__(self, buffer_size=15):
+    def __init__(self, buffer_size=15, min_significance=0.6):
         self.queue = []
         self.sum = None
         self.buffer_size = buffer_size
+        self.min_significance = min_significance
 
     # resets the current sum
     def reset(self):
@@ -16,19 +18,23 @@ class rolling_sum():
         self.queue.clear()
     
     # vector should be a numpy array
+    # adds the input vector to self.sum and appends it to the queue so it can be kept track of up to the point where it is removed
+    # removes vectors from the queue if it exceeds the buffer_size
     def add_vector(self, vector):
         assert(isinstance(vector, np.ndarray))
+        if np.max(vector) < self.min_significance:
+            return
+        self.queue.append(vector)
         if not isinstance(self.sum, np.ndarray):
             self.sum = vector
-        else:
-            assert(self.sum.shape == vector.shape)
-            self.sum = np.add(self.sum, vector)
-        while len(self.queue) >= self.buffer_size:
+            return
+        assert(self.sum.shape == vector.shape)
+        self.sum = np.add(self.sum, vector)
+        while len(self.queue) > self.buffer_size:
             self.sum = np.subtract(self.sum, self.queue.pop(0))
-        self.queue.append(vector)
         
     # returns a list of (index, confidence) of the higest confidence predictions
-    def get_confidences(self, top_n=3):
+    def get_topn(self, top_n=3):
         # gets the indexes of the top n confidences in the self.sum vector
         top_indexes = np.argpartition(self.sum, -top_n)[-top_n:]
         # sorts the indexes of the confidences in order of increasing confidence value
