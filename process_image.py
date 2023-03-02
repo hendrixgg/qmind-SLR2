@@ -21,8 +21,9 @@ def rescale_image(img):
 def rescale_image_from_file(img_path):
     return rescale_image(cv2.imread(img_path))
 
-# cropping an image given a list of points with attributes .x, and .y
-# if cropp is outside of input image, fill out of bound pixels with fill_pixel
+# cropping an image given an iterabel list of points with attributes .x, and .y
+# if crop is outside of input image, fill out of bound pixels with fill_pixel
+# returns the cropped image, top left corner coordinates (x, y), bottom right corner coordinates (x, y)
 def crop_square(img, points, pad_left=0, pad_right=0, pad_top=0, pad_bottom=0, fill_pixel=[255, 255, 255]):
     top, bottom = (img.shape[1], img.shape[0]), (0, 0)
     # find extreme points
