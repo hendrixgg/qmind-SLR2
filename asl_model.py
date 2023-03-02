@@ -1,9 +1,17 @@
 import tensorflow as tf
 import numpy as np
+from enum import Enum
 from process_image import rescale_image, rescale_image_from_file
 
+class MODEL_INPUT(Enum):
+    # signifies that the model takes an image as an input
+    IMAGE = 1
+    # signifies that the model takes in 21 3D hand landmark points from the mediapipe hands model in the form of an array of length 63
+    MP_LANDMARKS = 2
+
 model = tf.keras.models.load_model('models/asl_model2')
-input_shape = model.layers[0].input_shape[1:-1]
+input_shape = model.layers[0].input_shape[1:]
+model_input = MODEL_INPUT.IMAGE if len(input_shape.shape) > 1 else MODEL_INPUT.MP_LANDMARKS
 
 # prints the model architecture summary
 def model_summary():
