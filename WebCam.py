@@ -58,6 +58,8 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
             print("ignoring empty camera frame.")
             continue
 
+        # frame -> prediction vector, current text
+
         # Get the hand landmarks
         hand_landmarks = hands.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).multi_hand_landmarks
 
