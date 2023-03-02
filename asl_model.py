@@ -73,7 +73,8 @@ class Model():
         # wrist point
         w = self.hand_landmarks.landmark[0]
         # all of the points coordinates in a one dimesional array, with the wrist point at the origin
-        in_line = np.array([*chain(*chain([p.x - w.x, p.y - w.y, p.z - w.z] for p in self.hand_landmarks.landmark))])
+        scale_factor = self.cropped.shape[1] * 1. / self.cropped.shape[0]
+        in_line = np.array([*chain(*chain([(p.x - w.x) * scale_factor, p.y - w.y, p.z - w.z] for p in self.hand_landmarks.landmark))])
         return True, self.predict(in_line)
     
     # the following functions typically make more sense to use when static_image_mode=True
