@@ -133,7 +133,7 @@ class cnn:
             model.fit(self.train_set, self.train_labels, batch_size = 128, epochs = 20, validation_split=0.1, callbacks = [learning_rate_reduction])
             
             # Save the entire model as a SavedModel.
-            model.save('models/asl_model3')
+            model.save('models/asl_model4')
 
 def main():
     #For dataset https://www.kaggle.com/datasets/muhammadkhalid/sign-language-for-alphabets?resource=download 
