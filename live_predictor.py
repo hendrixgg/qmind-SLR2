@@ -40,6 +40,7 @@ class rolling_sum():
         # sorts the indexes of the confidences in order of increasing confidence value
         top_indexes = top_indexes[np.argsort(self.sum[top_indexes])]
         total = np.sum(self.sum)
+        total = 1 if total == 0 else total
         return [(i, self.sum[i] / total) for i in reversed(top_indexes)]
 
 # a class that maintains state and returns whether or not the state has persisted for the desired time_interval upon an update
@@ -67,7 +68,7 @@ class live_state():
 # only adds a charater to the string when the input_state changes
 # will add a repeat character if the time required for repeat to be inputted has elapsed
 class text_builder():
-    def __init__(self, init_letter: str='', time_interval: int=500, repeat_interval: int=-1, min_confidence=0.5):
+    def __init__(self, init_letter: str='', time_interval: int=500, repeat_interval: int=-1, min_confidence=0.6):
         self.input_state = live_state(init_letter, time_interval)
         self.repeat_state = live_state(init_letter, repeat_interval)
         self.string = ""
@@ -89,6 +90,51 @@ class text_builder():
             return True
         return False
     
+import cv2
+import asl_model
+
+class live_asl_model():
+    def __init__(self):
+        self.model = asl_model.Model(static_image_mode=False)
+        # logic for live language recognition
+        self.rolling_prediction = rolling_sum(buffer_size=15)
+        self.text_prediction = text_builder(time_interval=500)
+        # state variables
+        self.cropped_image = None
+        self.using_images = self.model.model_input_type == asl_model.MODEL_INPUT_TYPE.IMAGE
+    
+    # parameters:
+    # - frame: image to be processed by the model
+    # - top_n: number of the best predictions to be returned
+    # returns: a cropped image of the hand if there was one in the image,
+    # the top_n running model predictions, current text from text_builder
+    def process(self, frame, overlay_bounding_box=True, overlay_landmarks=True, top_n=3):
+        success, output = self.model.predict_unformatted(frame)
+
+        if not success:
+            # there is no hand in the frame
+            # reset the rolling prediction
+            self.rolling_prediction.reset()
+            # treat the scenario as a space between words
+            self.text_prediction.update(' ', 1)
+            return False, None, "[no hand in frame]", self.text_prediction.string
+
+        self.cropped_image, top, bottom, hand_landmarks = self.model.get_recent_crop_square()
+        if overlay_bounding_box:
+            cv2.rectangle(frame, top, bottom, (0, 255, 0), 2)
+        if overlay_landmarks:
+            asl_model.mp_drawing.draw_landmarks(frame, hand_landmarks, asl_model.mp_hands.HAND_CONNECTIONS)
+
+        # get the model prediction for this frame and add it to the current rolling sum of predictions
+        self.rolling_prediction.add_vector(output)
+        # get the top 3 predictions
+        predictions = [(self.model.get_label(i), c) for (i, c) in self.rolling_prediction.get_topn(top_n)]
+        # add predicted letter and confidence to text input
+        self.text_prediction.update(*predictions[0])
+        
+        return True, self.cropped_image, predictions, self.text_prediction.string
+        
+
 
 # def main():
 #     sliding_window = rolling_sum()

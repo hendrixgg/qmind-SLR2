@@ -1,12 +1,7 @@
 #Import Lib
 import os
 import cv2
-import asl_model
 import live_predictor
-import process_image
-import mediapipe as mp
-mp_hands = mp.solutions.hands
-mp_drawing = mp.solutions.drawing_utils
 
 #------------------(Functions)----------------------#
 
@@ -37,12 +32,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
     capture_mode = False if path == "" or scTime == 0 else True
 
     # logic for live language recognition
-    rolling_prediction = live_predictor.rolling_sum(buffer_size=15)
-    text_prediction = live_predictor.text_builder(time_interval=500)
-
-
-    # hand bounding box utility
-    hands = mp_hands.Hands(max_num_hands=1)
+    sign_language_model = live_predictor.live_asl_model()
     
     # open webcam
     cap = cv2.VideoCapture(0)
@@ -58,46 +48,15 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
             print("ignoring empty camera frame.")
             continue
 
-        # frame -> top predictions, text
-
-        # Get the hand landmarks
-        hand_landmarks = hands.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)).multi_hand_landmarks
-
-        # Iterate through the hand landmarks to get the bounding box
-        if hand_landmarks:
-            # will only iterate once since only one hand is tracked at a time
-            for handLMs in hand_landmarks:
-                cropped, top, bottom = process_image.crop_square(frame, handLMs.landmark, 40, 40, 40, 40)
-            cv2.imwrite("temp_img.png", cropped)
-            cv2.rectangle(frame, top, bottom, (0, 255, 0), 2)
-            # uncomment this line to display hand landmarks (joints)
-            mp_drawing.draw_landmarks(frame, handLMs, mp_hands.HAND_CONNECTIONS)
-        else:
-            # there is no hand in the frame
-            # reset the rolling prediction
-            rolling_prediction.reset()
-            # treat the scenario as a space between words
-            text_prediction.update(' ', 1)
-
-        # predict the current letter
-        if make_predictions and hand_landmarks:
-            rolling_prediction.add_vector(asl_model.predict_unformatted(cropped))
-            # get the top 3 predictions
-            predictions = [(asl_model.get_label(i), c) for (i, c) in rolling_prediction.get_topn(3)]
-            # add predicted letter to text input
-            text_prediction.update(*predictions[0])
-        else:
-            predictions = "[not predicting]"
-        # if there has been low confidence in gestures, treat the situation as a "transition between gestures" and perhaps add the previouly predicted letter to a string to record the interpretations
-        # if a "transition" was the previous "letter" do not add anything to the string recording the interpretation
-        # to make the framerate not be so slow, could find a way to make this asyncronus
+        # frame -> cropped image, top predictions, text
+        # modify the frame base on which overlays to display
+        success, cropped, predictions, text = sign_language_model.process(frame, overlay_bounding_box=True, overlay_landmarks=True)
+        
+        cv2.imwrite("temp_img.png", cropped) if success else 0
 
         # Display the resulting frame
         cv2.putText(frame, f"predicted letter: {predictions}", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (209,80,0,255), 3)
-        # if hand_landmarks:
-        #     cv2.rectangle(frame, top, bottom, (0, 255, 0), 2)
-        #     # uncomment this line to display hand landmarks (joints)
-        #     # mp_drawing.draw_landmarks(frame, handLMs, mp_hands.HAND_CONNECTIONS)
+        
         cv2.imshow('frame', frame)
         # cv2.displayOverlay('frame', f"predicted letter: {predictions}")
         # the overlay could include more information
@@ -105,14 +64,14 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
         # print text to console
         os.system("cls")
-        print("current text:\n", text_prediction.string)
+        print("current text:\n", text)
 
         # hotkey assignment
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         elif capture_mode and timmer % scTime == 0:
             imgName = f"{imgCnt}.png"
-            cv2.imwrite(os.path.join(path, imgName), cropped if not any(d == 0 for d in cropped.shape) else frame)
+            cv2.imwrite(os.path.join(path, imgName), cropped if success else frame)
             imgCnt += 1
   
     # After the loop release the cap object
