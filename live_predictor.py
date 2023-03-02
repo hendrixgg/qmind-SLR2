@@ -75,7 +75,7 @@ class text_builder():
             self.string += letter
             self.prev_letter = letter
             return True
-        return False        
+        return False
 
 
 # def main():
