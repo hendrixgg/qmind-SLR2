@@ -50,7 +50,8 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
         # frame -> cropped image, top predictions, text
         # modify the frame base on which overlays to display
-        success, cropped, predictions, text = sign_language_model.process(frame, overlay_bounding_box=True, overlay_landmarks=True)
+        success, cropped, predictions, text = sign_language_model.process(frame, make_predictions=make_predictions, overlay_bounding_box=True, 
+        overlay_landmarks=True, top_n=3)
         
         cv2.imwrite("temp_img.png", cropped) if success else 0
 

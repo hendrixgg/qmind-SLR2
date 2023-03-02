@@ -108,8 +108,11 @@ class live_asl_model():
     # - top_n: number of the best predictions to be returned
     # returns: a cropped image of the hand if there was one in the image,
     # the top_n running model predictions, current text from text_builder
-    def process(self, frame, overlay_bounding_box=True, overlay_landmarks=True, top_n=3):
-        success, output = self.model.predict_unformatted(frame)
+    def process(self, frame, make_predictions=True, overlay_bounding_box=True, overlay_landmarks=True, top_n=3):
+        if make_predictions:
+            success, output = self.model.predict_unformatted(frame)
+        else:
+            success, output = False, "[Not Predicting]"
 
         if not success:
             # there is no hand in the frame
@@ -117,7 +120,7 @@ class live_asl_model():
             self.rolling_prediction.reset()
             # treat the scenario as a space between words
             self.text_prediction.update(' ', 1)
-            return False, None, "[no hand in frame]", self.text_prediction.string
+            return False, None, output, self.text_prediction.string
 
         self.cropped_image, top, bottom, hand_landmarks = self.model.get_recent_crop_square()
         if overlay_bounding_box:
