@@ -75,7 +75,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
             # reset the rolling prediction
             rolling_prediction.reset()
             # treat the scenario as a space between words
-            text_prediction.update(' ')
+            text_prediction.update(' ', 1)
 
         # predict the current letter
         if make_predictions and hand_landmarks:

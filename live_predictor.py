@@ -36,47 +36,53 @@ class rolling_sum():
         total = np.sum(self.sum)
         return [(i, self.sum[i] / total) for i in reversed(top_indexes)]
 
+# a class that maintains state and returns whether or not the state has persisted for the desired time_interval upon an update
 class live_state():
     # init_state must be comparable, time_interval is in milliseconds
-    # if repeat is less than 0, repeats are not taken as inputs
-    def __init__(self, init_state=None, time_interval: int=500, repeat_interval: int=-1):
+    # if time_interval is less than 0, take as infinity
+    def __init__(self, init_state=None, time_interval: int=500):
         self.curr_time = time.time_ns()
         self.curr_state = init_state
         self.time_interval = time_interval * 1_000_000
-        self.repeat_interval = repeat_interval * 1_000_000
 
-    # return value: (True if enough time has elapsed), prev_state
+    # return value: True if enough time has elapsed with the same state
     def update(self, new_state):
-        new_time = time.time_ns()
-        prev_state = self.curr_state
-        elapsed = (new_time - self.curr_time >= self.time_interval and self.curr_state != new_state)
-        repeated = (self.repeat_interval > 0 and new_time - self.curr_time >= self.repeat_interval and self.curr_state == new_state)
-        if elapsed or repeated:
+        if self.time_interval < 1:
+            return False
+        time_diff = time.time_ns() - self.curr_time
+        elapsed = new_state == self.curr_state and time_diff >= self.time_interval
+        if elapsed or self.curr_state != new_state:
             self.curr_state = new_state
-            self.curr_time = new_time
-        return elapsed or repeated, prev_state
+            self.curr_time += time_diff
+        return elapsed
 
 
 # uses the live state class to take input
 # only adds a charater to the string when the input_state changes
 # will add a repeat character if the time required for repeat to be inputted has elapsed
 class text_builder():
-    def __init__(self, init_letter: str='', time_interval: int=500, repeat_interval: int=-1):
-        self.input_state = live_state(init_letter, time_interval, repeat_interval)
+    def __init__(self, init_letter: str='', time_interval: int=500, repeat_interval: int=-1, min_confidence=0.5):
+        self.input_state = live_state(init_letter, time_interval)
+        self.repeat_state = live_state(init_letter, repeat_interval)
         self.string = ""
         self.prev_letter = init_letter
+        self.min_confidence = min_confidence
 
     # updates the string if the input triggers an update
     # updates are triggered if the input changes
     # returns True if updated, otherwise False
-    def update(self, letter_input: str):
-        should_update, letter = self.input_state.update(letter_input)
-        if should_update:
+    def update(self, letter: str, confidence: float):
+        if confidence < self.min_confidence:
+            return False
+        should_update = self.input_state.update(letter)
+        should_update = should_update if letter != self.prev_letter else False
+        should_repeat = self.repeat_state.update(letter)
+        if should_update or should_repeat:
             self.string += letter
             self.prev_letter = letter
             return True
         return False
-
+    
 
 # def main():
 #     sliding_window = rolling_sum()
