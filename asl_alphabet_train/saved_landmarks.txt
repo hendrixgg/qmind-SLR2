@@ -1,0 +1,31 @@
+images saved as landmarks:
+2187/3000 images of letter A
+2207/3000 images of letter B
+1988/3000 images of letter C
+2463/3000 images of letter D
+2308/3000 images of letter E
+2876/3000 images of letter F
+2440/3000 images of letter G
+2393/3000 images of letter H
+2384/3000 images of letter I
+2578/3000 images of letter J
+2700/3000 images of letter K
+2527/3000 images of letter L
+1565/3000 images of letter M
+1276/3000 images of letter N
+2265/3000 images of letter O
+2042/3000 images of letter P
+2093/3000 images of letter Q
+2541/3000 images of letter R
+2551/3000 images of letter S
+2349/3000 images of letter T
+2516/3000 images of letter U
+2548/3000 images of letter V
+2456/3000 images of letter W
+2158/3000 images of letter X
+2585/3000 images of letter Y
+2351/3000 images of letter Z
+1625/3000 images of letter space
+1701/3000 images of letter del
+
+source of images: https://www.kaggle.com/datasets/grassknoted/asl-alphabet
