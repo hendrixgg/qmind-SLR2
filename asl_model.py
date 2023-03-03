@@ -25,17 +25,20 @@ class MODEL_TYPE(Enum):
     SCIKITLEARN_SVC = 2
 
 class Model():
-    def __init__(self, includeJ=False, static_image_mode=False, saved_model_path='models/asl_model2', use_pickle=False):
+    def __init__(self, label_map=None, static_image_mode=False, saved_model_path='models/asl_model2', use_pickle=False):
         self.model = pickle.load(open(saved_model_path, "rb")) if use_pickle else tf.keras.models.load_model(saved_model_path)
+        # for optional use in the get_label function
+        self.label_map = label_map
         # get the type of model and input shape
         if isinstance(self.model, tf.keras.models.Sequential):
             self.model_type = MODEL_TYPE.KERAS_SEQUENTIAL
             self.input_shape = self.model.layers[0].input_shape[1:]
+            self.output_shape = self.model.layers[-1].output_shape
         elif isinstance(self.model, sklearn.svm.SVC):
             self.model_type = MODEL_TYPE.SCIKITLEARN_SVC
             self.input_shape = self.model.shape_fit_[1:]
-            
-        self.includeJ = includeJ
+            self.output_shape = self.model.classes_.shape
+
         # determine input type
         if len(self.input_shape) > 1:
             # remove channel dimesion, assuming grayscale
@@ -65,8 +68,9 @@ class Model():
 
     # returns the letter label for a model output value
     def get_label(self, integer_value):
-        label = ord('A') + integer_value
-        return chr(label) if self.includeJ or label < ord('J') else chr(label + 1)
+        if self.label_map == None:
+            return integer_value
+        return self.label_map[integer_value]
     
     # returns the results from the last predict_unformatted
     def get_recent_crop_square(self):
@@ -83,7 +87,6 @@ class Model():
         if self.model_type == MODEL_TYPE.KERAS_SEQUENTIAL:
             return self.model.predict(np.asarray([model_input]), verbose=0)[0]
         elif self.model_type == MODEL_TYPE.SCIKITLEARN_SVC:
-            print(f"{model_input=}")
             return self.model.predict_proba([model_input])[0]
 
     # takes an unformatted cv2 BGR image and predicts the ASL handsign in it

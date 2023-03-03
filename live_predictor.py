@@ -87,7 +87,10 @@ class text_builder():
         should_update = should_update if letter != self.prev_letter else False
         should_repeat = self.repeat_state.update(letter)
         if should_update or should_repeat:
-            self.string += letter
+            if letter == "del":
+                self.string = self.string[:-1]
+            else:
+                self.string += letter
             self.prev_letter = letter
             return True
         return False
@@ -97,7 +100,10 @@ import asl_model
 
 class live_asl_model():
     def __init__(self):
-        self.model = asl_model.Model(includeJ=True, static_image_mode=False, saved_model_path="models/svm_landmark_model.sav", use_pickle=True)
+        self.model = asl_model.Model(static_image_mode=False, saved_model_path="models/svm_landmark_model1.sav", use_pickle=True)
+        self.label_map = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', 'del', '']
+        self.blank = np.zeros(self.model.output_shape)
+        self.blank[-1] = 1
         # logic for live language recognition
         self.rolling_prediction = rolling_sum(buffer_size=15)
         self.text_prediction = text_builder(time_interval=500)
@@ -119,9 +125,9 @@ class live_asl_model():
         if not success:
             # there is no hand in the frame
             # reset the rolling prediction
-            self.rolling_prediction.reset()
-            # treat the scenario as a space between words
-            self.text_prediction.update(' ', 1)
+            self.rolling_prediction.add_vector(np.zeros(self.model.output_shape))
+            # treat the scenario as a nothing input
+            self.text_prediction.update('', 1)
             return False, None, output, self.text_prediction.string
 
         self.cropped_image, top, bottom, hand_landmarks = self.model.get_recent_crop_square()
@@ -132,9 +138,8 @@ class live_asl_model():
 
         # get the model prediction for this frame and add it to the current rolling sum of predictions
         self.rolling_prediction.add_vector(output)
-        print(output)
         # get the top 3 predictions
-        predictions = [(self.model.get_label(i), c) for (i, c) in self.rolling_prediction.get_topn(top_n)]
+        predictions = [(self.label_map[i], c) for (i, c) in self.rolling_prediction.get_topn(top_n)]
         # add predicted letter and confidence to text input
         self.text_prediction.update(*predictions[0])
         
