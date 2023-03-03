@@ -35,6 +35,8 @@ class rolling_sum():
         
     # returns a list of (index, confidence) of the higest confidence predictions
     def get_topn(self, top_n=3):
+        if not isinstance(self.sum, np.ndarray):
+            return [(0, 0)]
         # gets the indexes of the top n confidences in the self.sum vector
         top_indexes = np.argpartition(self.sum, -top_n)[-top_n:]
         # sorts the indexes of the confidences in order of increasing confidence value
@@ -95,7 +97,7 @@ import asl_model
 
 class live_asl_model():
     def __init__(self):
-        self.model = asl_model.Model(static_image_mode=False)
+        self.model = asl_model.Model(includeJ=True, static_image_mode=False, saved_model_path="models/svm_landmark_model.sav", use_pickle=True)
         # logic for live language recognition
         self.rolling_prediction = rolling_sum(buffer_size=15)
         self.text_prediction = text_builder(time_interval=500)
@@ -130,6 +132,7 @@ class live_asl_model():
 
         # get the model prediction for this frame and add it to the current rolling sum of predictions
         self.rolling_prediction.add_vector(output)
+        print(output)
         # get the top 3 predictions
         predictions = [(self.model.get_label(i), c) for (i, c) in self.rolling_prediction.get_topn(top_n)]
         # add predicted letter and confidence to text input
