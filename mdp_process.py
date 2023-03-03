@@ -61,11 +61,14 @@ def main():
     train_labels, train_images = train_set['label'].values, np.reshape(train_set.iloc[:, 1:].values, (27455, 28, 28)) / 255.0
     test_labels, test_images = test_set['label'].values, np.reshape(test_set.iloc[:, 1:].values, (7172, 28, 28)) / 255.0
 
-    train_ldm = np.empty((100,21,3))
-    for trimg in train_images[100]:
+    path = createDir('ldm_mnist_train')
+    file = open(path + '.csv', 'w')
+    writer = csv.writer(file)
+    for trimg in train_images:
         ldm = rawToLdm(trimg)
-        np.append(train_ldm,ldm)
-    print(train_ldm[0])
+        writer.writerow(ldm)
+    file.close()
+    
     
     cv2.destroyAllWindows()
 
