@@ -6,6 +6,8 @@ import numpy as np
 import mediapipe as mp
 import matplotlib.pyplot as plt
 import pipeline
+from PIL import Image
+
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -38,19 +40,14 @@ def imgToLdm(hands, image):
     return ldm
 
 
-def rawToLdm(raw_img, path):
-    #save csv data into a image
-    plt.imsave(path,raw_img)
+def rawToLdm(image):
     #load the image in cv2
-    image = cv2.imread(path, flags = cv2.IMREAD_COLOR)
     with mp_hands.Hands(
         static_image_mode = True,
         max_num_hands = 1,
         min_detection_confidence = 0.5) as hands:
         #detect hand landmarks using mediapipe
-        ldm = imgToLdm(hands, image)
-        #delete the temporary image file after use
-        os.remove(path)
+        ldm = imgToLdm(hands, image.astype(np.uint8))
         return ldm
 
 
@@ -58,18 +55,15 @@ def rawToLdm(raw_img, path):
 def main():
     import pandas as pd
     import matplotlib.pyplot as plt
-    # get image data from files #
-    model = pipeline.cnn_tf()
-    model.load('train','mnist_handsigns/sign_mnist_train.csv')
-    model.load('test','mnist_handsigns/sign_mnist_test.csv')
-    #use same preprocessing methods
-    model.pre_process1()
+    
+    train_set, test_set = pd.read_csv('mnist_handsigns/sign_mnist_train.csv'), pd.read_csv('mnist_handsigns/sign_mnist_test.csv')
 
-    print("Now converting images to landmarks:")
-    temp = "temp.png"
-    train_ldm = np.empty((20,21,3))
-    for trimg in model.train_set[20]:
-        ldm = rawToLdm(trimg, temp)
+    train_labels, train_images = train_set['label'].values, np.reshape(train_set.iloc[:, 1:].values, (27455, 28, 28)) / 255.0
+    test_labels, test_images = test_set['label'].values, np.reshape(test_set.iloc[:, 1:].values, (7172, 28, 28)) / 255.0
+
+    train_ldm = np.empty((100,21,3))
+    for trimg in train_images[100]:
+        ldm = rawToLdm(trimg)
         np.append(train_ldm,ldm)
     print(train_ldm[0])
     
