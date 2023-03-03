@@ -101,12 +101,12 @@ import asl_model
 class live_asl_model():
     def __init__(self):
         self.model = asl_model.Model(static_image_mode=False, saved_model_path="models/svm_landmark_model1.sav", use_pickle=True)
-        self.label_map = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', 'del', '']
+        self.label_map = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '', 'del', ' ']
         self.blank = np.zeros(self.model.output_shape)
         self.blank[-1] = 1
         # logic for live language recognition
         self.rolling_prediction = rolling_sum(buffer_size=15)
-        self.text_prediction = text_builder(time_interval=500)
+        self.text_prediction = text_builder(time_interval=500, repeat_interval=-1)
         # state variables
         self.cropped_image = None
         self.using_images = self.model.model_input_type == asl_model.MODEL_INPUT_TYPE.IMAGE
@@ -126,8 +126,8 @@ class live_asl_model():
             # there is no hand in the frame
             # reset the rolling prediction
             self.rolling_prediction.add_vector(np.zeros(self.model.output_shape))
-            # treat the scenario as a nothing input
-            self.text_prediction.update('', 1)
+            # treat the scenario as a space input
+            self.text_prediction.update(' ', 1)
             return False, None, output, self.text_prediction.string
 
         self.cropped_image, top, bottom, hand_landmarks = self.model.get_recent_crop_square()
