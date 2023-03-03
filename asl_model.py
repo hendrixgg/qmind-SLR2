@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 from process_image import rescale_image, rescale_image_from_file
 
-model = tf.keras.models.load_model('models/asl_model3')
+model = tf.keras.models.load_model('models/asl_model4')
 input_shape = model.layers[0].input_shape[1:-1]
 
 # prints the model architecture summary

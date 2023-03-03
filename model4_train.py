@@ -56,13 +56,26 @@ class cnn:
         # It will add all images to the dataset that's directories match
 
         img_size = 64
-        CATEGORIES = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
-              "u", "v", "w", "x", "y", "z", "unknown"]
+        CATEGORIES = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
+                       "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "del", "nothing", "space"]
+         
         for category in CATEGORIES: 
             path = os.path.join(directory, category)   
             class_number = CATEGORIES.index(category) 
             print("Gathering jpg images of letter ", category)
+            total_files = 0
+            count = 0
+            # Iterate directory
+            for path_list in os.listdir(path):
+                # check if current path is a file
+                if os.path.isfile(os.path.join(path, path_list)):
+                    total_files += 1
+            print('File count:', total_files)
+            
             for img in os.listdir(path):
+                percent = round((count / total_files) * 100)
+                count += 1
+                print (percent, "%", end="\r")
                 try:
                     img_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_GRAYSCALE)
                     img_array_resized = cv2.resize(img_array, (img_size, img_size))
@@ -74,6 +87,8 @@ class cnn:
         print('Checking if data is randomized')
         for sample in self.data[:10]:
             print(sample[1])
+
+        return self.data
 
 
 
@@ -100,7 +115,7 @@ class cnn:
                     featurewise_std_normalization=False,  # divide inputs by std of the dataset
                     samplewise_std_normalization=False,  # divide each input by its std
                     zca_whitening=False,  # apply ZCA whitening
-                    rotation_range=20,  # randomly rotate images in the range (degrees, 0 to 20)
+                    rotation_range=10,  # randomly rotate images in the range (degrees, 0 to 20)
                     zoom_range = 0.1, # Randomly zoom image 
                     width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
                     height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
@@ -126,19 +141,20 @@ class cnn:
             model.add(Flatten())
             model.add(Dense(units = 512 , activation = 'relu'))
             model.add(Dropout(0.3))
-            model.add(Dense(units = 27 , activation = 'softmax'))
+            model.add(Dense(units = 29 , activation = 'softmax'))
             model.compile(optimizer = 'adam' , loss = 'categorical_crossentropy' , metrics = ['accuracy'])
             model.summary()
 
-            model.fit(self.train_set, self.train_labels, batch_size = 128, epochs = 20, validation_split=0.1, callbacks = [learning_rate_reduction])
+            model.fit(self.train_set, self.train_labels, batch_size = 64, epochs = 4, validation_split=0.1, callbacks = [learning_rate_reduction])
             
             # Save the entire model as a SavedModel.
             model.save('models/asl_model4')
 
 def main():
-    #For dataset https://www.kaggle.com/datasets/muhammadkhalid/sign-language-for-alphabets?resource=download 
+
+    #For dataset: https://www.kaggle.com/datasets/grassknoted/asl-alphabet
     model = cnn()
-    model.add_data('handsign_imgs')
+    data = model.add_data('asl_alphabet')
     model.split_data()
     model.pre_process_data()
     model.train_model()
@@ -146,4 +162,6 @@ def main():
 
 
 if __name__ == "__main__":
+    import tensorflow as tf
+    print("# GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
     main()
