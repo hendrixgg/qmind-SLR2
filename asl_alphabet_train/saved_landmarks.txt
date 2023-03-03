@@ -28,4 +28,6 @@ images saved as landmarks:
 1625/3000 images of letter space
 1701/3000 images of letter del
 
+the data is also stored in the csv file in no particular order, the label column identifies the hand
+
 source of images: https://www.kaggle.com/datasets/grassknoted/asl-alphabet
