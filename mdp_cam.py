@@ -17,7 +17,7 @@ Frames without a hand would be ignored, but hand can be partially covered and la
 def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
     capture_mode = False if path == "" or scTime == 0 else True
 
-    file = open(path + "mdp.csv", 'w')
+    file = open(path + "\mdp.csv", 'w')
     writer = csv.writer(file)
 
     # logic for live language recognition

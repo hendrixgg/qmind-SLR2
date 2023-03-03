@@ -4,6 +4,8 @@ import csv
 import cv2
 import numpy as np
 import mediapipe as mp
+import matplotlib.pyplot as plt
+import pipeline
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -28,26 +30,27 @@ def imgToLdm(hands, image):
     output: an (21,3) array of landmark data
     one landmark = [x, y, z]'''
     ldm = np.empty((21,3))
-    results = hands.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    results = hands.process(cv2.cvtColor(image,cv2.COLOR_BGR2RGB))
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
             mp_drawing.draw_landmarks(image,hand_landmarks,mp_hands.HAND_CONNECTIONS)
             np.append(ldm, hand_landmarks)
-    else:
-        return None
     return ldm
 
-def rawToLdm(raw_img):
-    '''mnist dataset is csv
-    read csv to image
-    then load image in mediapipe
-    then convert to landmark array / csv data'''
-    image = cv2.imdecode(raw_img)
+
+def rawToLdm(raw_img, path):
+    #save csv data into a image
+    plt.imsave(path,raw_img)
+    #load the image in cv2
+    image = cv2.imread(path, flags = cv2.IMREAD_COLOR)
     with mp_hands.Hands(
         static_image_mode = True,
         max_num_hands = 1,
         min_detection_confidence = 0.5) as hands:
+        #detect hand landmarks using mediapipe
         ldm = imgToLdm(hands, image)
+        #delete the temporary image file after use
+        os.remove(path)
         return ldm
 
 
@@ -55,23 +58,22 @@ def rawToLdm(raw_img):
 def main():
     import pandas as pd
     import matplotlib.pyplot as plt
-    path = createDir('mdp_mnist')
     # get image data from files #
-    train_raw, test_raw = pd.read_csv('mnist_handsigns/sign_mnist_train.csv'), pd.read_csv('mnist_handsigns/sign_mnist_test.csv')
+    model = pipeline.cnn_tf()
+    model.load('train','mnist_handsigns/sign_mnist_train.csv')
+    model.load('test','mnist_handsigns/sign_mnist_test.csv')
+    #use same preprocessing methods
+    model.pre_process1()
 
-    train_labels, train_images = train_raw['label'].values, np.reshape(train_raw.iloc[:, 1:].values, (27455, 28, 28)) / 255.0
-    test_labels, test_images = test_raw['label'].values, np.reshape(test_raw.iloc[:, 1:].values, (7172, 28, 28)) / 255.0
-
-    train_file = open(path + "train.csv", 'w')
-    writer1 = csv.writer(train_file)
-    for lab_train, img_train in train_labels, train_images:
-        ldm_train = rawToLdm(img_train)
-        row = writer1.writerow(ldm_train)
-        row.append(lab_train)
-    train_file.close()
-
+    print("Now converting images to landmarks:")
+    temp = "temp.png"
+    train_ldm = np.empty((20,21,3))
+    for trimg in model.train_set[20]:
+        ldm = rawToLdm(trimg, temp)
+        np.append(train_ldm,ldm)
+    print(train_ldm[0])
+    
     cv2.destroyAllWindows()
-    #now we have KeyError: 'label' in train_raw['label'] ->indexer = self.columns.get_loc(key)
 
 if __name__ == "__main__":
     main()
