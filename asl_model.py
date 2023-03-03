@@ -25,7 +25,7 @@ class MODEL_TYPE(Enum):
     SCIKITLEARN_SVC = 2
 
 class Model():
-    def __init__(self, label_map=None, static_image_mode=False, saved_model_path='models/asl_model2', use_pickle=False):
+    def __init__(self, saved_model_path, label_map=None, static_image_mode=False, use_pickle=False):
         self.model = pickle.load(open(saved_model_path, "rb")) if use_pickle else tf.keras.models.load_model(saved_model_path)
         # for optional use in the get_label function
         self.label_map = label_map

@@ -100,7 +100,7 @@ import asl_model
 
 class live_asl_model():
     def __init__(self):
-        self.model = asl_model.Model(static_image_mode=False, saved_model_path="models/svm_landmark_model1.sav", use_pickle=True)
+        self.model = asl_model.Model(saved_model_path="models/svm_landmark_model2.sav", static_image_mode=False, use_pickle=True)
         self.label_map = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '', 'del', ' ']
         self.blank = np.zeros(self.model.output_shape)
         self.blank[-1] = 1
