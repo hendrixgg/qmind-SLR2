@@ -56,8 +56,8 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         cv2.imwrite("temp_img.png", cropped) if success else 0
 
         # Display the resulting frame
-        cv2.putText(frame, f"predicted letter: {predictions}", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (209,80,0,255), 3)
-        
+        cv2.putText(frame, f"predicted letter: {predictions}", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (209,80,0,255), 2, cv2.LINE_AA)
+        cv2.putText(frame, f"current text:\n {text}", (50,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (209,80,0,255), 2, cv2.LINE_AA)
         cv2.imshow('frame', frame)
         # cv2.displayOverlay('frame', f"predicted letter: {predictions}")
         # the overlay could include more information
