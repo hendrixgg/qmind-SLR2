@@ -65,6 +65,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
         # print text to console
         os.system("cls")
+        print(f"predicted letter: {predictions}")
         print("current text:\n", text)
 
         # hotkey assignment
@@ -74,6 +75,9 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
             imgName = f"{imgCnt}.png"
             cv2.imwrite(os.path.join(path, imgName), cropped if success else frame)
             imgCnt += 1
+
+        if cv2.waitKey(1) & 0xFF == ord('c'):
+            sign_language_model.text_prediction.reset()
   
     # After the loop release the cap object
     cap.release()
