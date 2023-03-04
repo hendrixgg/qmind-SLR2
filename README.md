@@ -1,5 +1,12 @@
 # QMIND x Distributive x JKUAT
 ## Project Bravo - Live ASL Recognition
+## Table of Contents
+1. Meet The Team
+2. Required Libraries
+3. Repository Organization
+4. The Data Sets
+5. The Model
+6. Next Steps
 
 ### Meet The Team
 - Matthew Li
