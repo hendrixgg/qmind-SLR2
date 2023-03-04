@@ -12,18 +12,20 @@ def rotate_image(img, angle):
 def blur_image(img, blur_amount):
     return ndimage.gaussian_filter(img, sigma=blur_amount)
 
-# Rescale image to grayscale numpy array (28, 28, 1) with values 0 to 1
+# Rescale image to grayscale numpy array of shape (shape[0], shape[1], 1) with values 0 to 1
 # ASSUMING THE PIXEL VALUES ARE FROM 0-255 IN THE FIRST PLACE
-def rescale_image(img):
-    return np.asarray(cv2.resize(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), dsize=(28, 28), interpolation=cv2.INTER_CUBIC)) / 255.0
+def rescale_image(img, shape=(28, 28)):
+    return np.asarray(cv2.resize(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), dsize=shape, interpolation=cv2.INTER_CUBIC)) / 255.0
 
 # Reads the image from the specified filepath, returns it after applying rescale_image
-def rescale_image_from_file(img_path):
-    return rescale_image(cv2.imread(img_path))
+def rescale_image_from_file(img_path, shape=(28, 28)):
+    return rescale_image(cv2.imread(img_path), shape=shape)
 
-# cropping an image given a list of points with attributes .x, and .y
-# if cropp is outside of input image, fill out of bound pixels with fill_pixel
-def crop_square(img, points, pad_left=0, pad_right=0, pad_top=0, pad_bottom=0, fill_pixel=[255, 255, 255]):
+# cropping an image given an iterabel list of points with attributes .x, and .y
+# those points must be floating point values that have been scaled relative to the size of the img
+# if crop is outside of input image, fill out of bound pixels with fill_pixel
+# returns the cropped image, top left corner coordinates (x, y), bottom right corner coordinates (x, y)
+def crop_square(img, points, pad_left=30, pad_right=30, pad_top=30, pad_bottom=30, fill_pixel=[255, 255, 255]):
     top, bottom = (img.shape[1], img.shape[0]), (0, 0)
     # find extreme points
     for pt in points:
