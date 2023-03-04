@@ -6,7 +6,7 @@ once the program is run, a webcam video window will open and you will be able to
 
 show a different ASL handsign to see if the model will predict correctly
 
-(letters J and Z won't work because they require gestures and the model has only been trained on still images)
+press c to clear the current text
 
 Finally, press q to quit
 

@@ -64,6 +64,10 @@ class live_state():
             self.curr_state = new_state
             self.curr_time += time_diff
         return elapsed
+    
+    def reset(self, reset_state=None):
+        self.curr_time = time.time_ns()
+        self.curr_state = reset_state
 
 
 # uses the live state class to take input
@@ -94,6 +98,12 @@ class text_builder():
             self.prev_letter = letter
             return True
         return False
+    
+    def reset(self):
+        self.string = ""
+        self.prev_letter = ""
+        self.input_state.reset("")
+        self.repeat_state.reset("")
     
 import cv2
 import asl_model
