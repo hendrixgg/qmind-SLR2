@@ -24,7 +24,8 @@ def main():
     test_labels, test_imgs = make_binary_vector(shift(test_set['label'].values), length=24), np.reshape(test_set.iloc[:, 1:].values, (len(test_set.index), 28, 28)) / 255.0
 
     # check the model
-    test_loss, test_acc = asl_model.model.evaluate(test_imgs,  test_labels, verbose=1)
+    model = asl_model.Model("models/asl_model2")
+    test_loss, test_acc = model.model.evaluate(test_imgs,  test_labels, verbose=1)
     print("test_loss:", test_loss)
     print("test_acc:", test_acc)
 

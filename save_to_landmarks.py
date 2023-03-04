@@ -53,6 +53,8 @@ except:
 
 mp_hands = mp.solutions.hands
 
+
+# saves an image dataset in the form of the hand landmarks produced my mediapipe.solutions.Hands()
 class manage_dataset():
 
     def __init__(self, img_size=200):
@@ -97,16 +99,19 @@ class manage_dataset():
                 self.data.append((landmarks, class_number))
             hand_found.append(f"{img_count - no_hand}/{img_count} images of letter {category}")
             print(hand_found[-1])
-         
+        
+        # print how many hands were found in images of certain categories
         print("images collected:")
         for found in hand_found:
             print(found)
+        
         random.shuffle(self.data)
-        #Check if shuffled
+        # Check if the data was shuffled
         print('Checking if data is randomized')
         for sample in self.data[:10]:
             print(sample[1])
 
+    # take the data store in self.data and split it into two numpy arrays, one containing landmarks and one being the label of the hand sign
     def split_data_landmarks(self):
         self.landmark_rows = []
         self.labels = []
@@ -147,6 +152,7 @@ class manage_dataset():
                     vertical_flip=False)  # randomly flip images
         self.datagen.fit(self.images)
 
+    # this function will take the images saved in self.images and 
     def convert_to_landmarks(self):
         for img in self.images:
             success, landmarks = self.produce_hand_landmarks(img)
@@ -166,7 +172,7 @@ class manage_dataset():
         # add data to dataframe
         self.dataframe = pd.DataFrame(self.landmark_rows, columns=[*chain(*chain([f"x{i}", f"y{i}", f"z{i}"] for i in range(21)))])
         self.dataframe["label"] = self.labels
-
+        # write to .csv file
         self.dataframe.to_csv(os.path.join(directory, "asl_alphabet_landmarks.csv"))
 
 # print([*chain(*chain([f"x{i}", f"y{i}", f"z{i}"] for i in range(21)))])

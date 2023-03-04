@@ -64,6 +64,10 @@ class live_state():
             self.curr_state = new_state
             self.curr_time += time_diff
         return elapsed
+    
+    def reset(self, reset_state=None):
+        self.curr_time = time.time_ns()
+        self.curr_state = reset_state
 
 
 # uses the live state class to take input
@@ -95,12 +99,18 @@ class text_builder():
             return True
         return False
     
+    def reset(self):
+        self.string = ""
+        self.prev_letter = ""
+        self.input_state.reset("")
+        self.repeat_state.reset("")
+    
 import cv2
 import asl_model
 
 class live_asl_model():
     def __init__(self):
-        self.model = asl_model.Model(static_image_mode=False, saved_model_path="models/svm_landmark_model1.sav", use_pickle=True)
+        self.model = asl_model.Model(saved_model_path="models/svm_landmark_model2.sav", static_image_mode=False, use_pickle=True)
         self.label_map = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '', 'del', ' ']
         self.blank = np.zeros(self.model.output_shape)
         self.blank[-1] = 1

@@ -31,3 +31,8 @@ images saved as landmarks:
 the data is also stored in the csv file in no particular order, the label column identifies the hand
 
 source of images: https://www.kaggle.com/datasets/grassknoted/asl-alphabet
+
+how to make the data better?
+ - better lighting so there can be better landmark generation for training
+ - use a better gesture for D, seems to conflict with X a lot
+ - gesture for U and R are very similar, only difference is crossed fingers
