@@ -2,14 +2,23 @@
 ## Project Bravo - Live ASL Recognition
 
 ### Meet The Team
-- Matthew Li
+- Hendrix Gryspeerdt - Project Lead
+    - First year engineering student
+    - hendrix.gryspeerdt@gmail.com
+    - https://github.com/hendrixgg 
 - Sammi Wang
     - 4th year Cognitive Science student
+    - wxr.sammi@hotmail.com
+    - https://github.com/SammiW15 
 - Liam Salass
     - 3rd year Computer Engineering Student
+    - liamsalass@yahoo.com
+    - https://github.com/Liamsalass 
+- Matthew Li
+    - https://github.com/mattyli
 - Noah Waisbrod
-- Hendrix Gryspeerdt
-    - First year engineering student
+    - https://github.com/Noah-Waisbrod 
+
 
 ### Required Libraries
 
