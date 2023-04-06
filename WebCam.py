@@ -2,6 +2,8 @@
 import os
 import cv2
 import live_predictor
+# for frame rate
+import time
 
 #------------------(Functions)----------------------#
 
@@ -40,6 +42,8 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
     imgCnt = 0
     timmer = 0
 
+    # frame rate
+    curr_time = time.time()
     while(True):
         timmer += 1
         # Capture the video frame
@@ -53,11 +57,12 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         success, cropped, predictions, text = sign_language_model.process(frame, make_predictions=make_predictions, overlay_bounding_box=True, 
         overlay_landmarks=True, top_n=3)
         
-        cv2.imwrite("temp_img.png", cropped) if success else 0
+        # cv2.imwrite("temp_img.png", cropped) if success else 0
 
         # Display the resulting frame
         cv2.putText(frame, f"predicted letter: {predictions}", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 1, (209,80,0,255), 2, cv2.LINE_AA)
         cv2.putText(frame, f"current text: {text}", (50,100), cv2.FONT_HERSHEY_SIMPLEX, 1, (209,80,0,255), 2, cv2.LINE_AA)
+        cv2.putText(frame, f"frame rate: {1 / (time.time() - curr_time)}", (50,150), cv2.FONT_HERSHEY_SIMPLEX, 1, (209,80,0,255), 2, cv2.LINE_AA)
         cv2.imshow('frame', frame)
         # cv2.displayOverlay('frame', f"predicted letter: {predictions}")
         # the overlay could include more information
@@ -67,6 +72,8 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
         os.system("cls")
         print(f"predicted letter: {predictions}")
         print("current text:\n", text)
+        print(f"frame rate: {1 / (time.time() - curr_time)}")
+        curr_time = time.time()
 
         # hotkey assignment
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -78,6 +85,7 @@ def openVideo(path : str="", scTime : int=0, make_predictions: bool=True):
 
         if cv2.waitKey(1) & 0xFF == ord('c'):
             sign_language_model.text_prediction.reset()
+        
   
     # After the loop release the cap object
     cap.release()
