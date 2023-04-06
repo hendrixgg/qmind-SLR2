@@ -35,10 +35,10 @@
 - seaborn
 - TensorFlow
 
-To create a conda environment copy and paste the following commands into the terminal one by one:
+To create a conda environment copy and paste the following commands into the terminal one by one *****doesn't work***:
 
 ```
-conda create -n qmind_slr python=3.8.8 tensorflow numpy pandas scipy matplotlib seaborn pip opencv
+conda create -n qmind_slr python=3.10.6 tensorflow numpy pandas scipy scikit-learn matplotlib seaborn opencv pip
 conda activate qmind_slr
 pip install mediapipe
 ```
