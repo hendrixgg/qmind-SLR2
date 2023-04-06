@@ -1,6 +1,5 @@
 from enum import Enum
 from itertools import chain
-import tensorflow as tf
 import numpy as np
 import cv2
 import pickle
@@ -15,35 +14,37 @@ class MODEL_INPUT_TYPE(Enum):
     # signifies that the model takes an image as an input
     IMAGE = 1
     # signifies that the model takes in 3D hand landmark points from the mediapipe hands model in the form of a one-dimesional array
+    # [x0, y0, z0, x1, y1, z1, ..., x20, y20, z20]
     MP_LANDMARKS = 2
 
 class MODEL_TYPE(Enum):
-    # Model is a tensorflow.keras.models.Sequential model
-    KERAS_SEQUENTIAL = 1
     # Model is a sklearn.svm.SVC model
     # must have the property: probability=True on creation
     SCIKITLEARN_SVC = 2
 
 class Model():
     def __init__(self, saved_model_path, label_map=None, static_image_mode=False, use_pickle=False):
-        self.model = pickle.load(open(saved_model_path, "rb")) if use_pickle else tf.keras.models.load_model(saved_model_path)
+        self.model = pickle.load(open(saved_model_path, "rb"))
         # for optional use in the get_label function
         self.label_map = label_map
         # get the type of model and input shape
-        if isinstance(self.model, tf.keras.models.Sequential):
-            self.model_type = MODEL_TYPE.KERAS_SEQUENTIAL
-            self.input_shape = self.model.layers[0].input_shape[1:]
-            self.output_shape = self.model.layers[-1].output_shape
-        elif isinstance(self.model, sklearn.svm.SVC):
+        if isinstance(self.model, sklearn.svm.SVC):
             self.model_type = MODEL_TYPE.SCIKITLEARN_SVC
             self.input_shape = self.model.shape_fit_[1:]
             self.output_shape = self.model.classes_.shape
-
+        else:
+            self.model_type = None
+            self.input_shape = None
+            self.output_shape = None
+        
         # determine input type
-        if len(self.input_shape) > 1:
+        if not self.input_shape:
+            # input not determined
+            print("model input not defined")
+        elif len(self.input_shape) == 1:
+            self.model_input_type = MODEL_INPUT_TYPE.IMAGE
             # remove channel dimesion, assuming grayscale
             self.input_shape = self.input_shape[:-1]
-            self.model_input_type = MODEL_INPUT_TYPE.IMAGE
         else:
             self.model_input_type = MODEL_INPUT_TYPE.MP_LANDMARKS
 
@@ -58,13 +59,13 @@ class Model():
 
     # prints the model architecture summary
     def model_summary(self):
-        if self.model_type == MODEL_TYPE.KERAS_SEQUENTIAL:
-            self.model.summary()
-        elif self.model_type == MODEL_TYPE.SCIKITLEARN_SVC:
+        if self.model_type == MODEL_TYPE.SCIKITLEARN_SVC:
             print(f"sklearn.svm.SVC:")
             print(f"{self.model.shape_fit_=}")
             print(f"{self.model.classes_=}")
             print(f"{self.model.n_features_in_=}")
+        else:
+            print("model structure not recognized")
 
     # returns the letter label for a model output value
     def get_label(self, integer_value):
@@ -84,9 +85,7 @@ class Model():
         if not isinstance(model_input, np.ndarray) or model_input.shape != self.input_shape:
             print(f"Error in model input: invalid input shape. {model_input.shape} != {self.input_shape}")
             return "ERROR"
-        if self.model_type == MODEL_TYPE.KERAS_SEQUENTIAL:
-            return self.model.predict(np.asarray([model_input]), verbose=0)[0]
-        elif self.model_type == MODEL_TYPE.SCIKITLEARN_SVC:
+        if self.model_type == MODEL_TYPE.SCIKITLEARN_SVC:
             return self.model.predict_proba([model_input])[0]
 
     # takes an unformatted cv2 BGR image and predicts the ASL handsign in it
