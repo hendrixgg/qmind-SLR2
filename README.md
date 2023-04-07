@@ -24,7 +24,7 @@
 
 
 ### Required Libraries
-
+to run locally:
 - openCV
 - MediaPipe
 - numpy
@@ -33,7 +33,11 @@
 - scipy
 - matplotlib
 - seaborn
-- TensorFlow
+- sklearn
+
+to save and load model to onnx:
+- skl2onnx
+- onnxruntime
 
 To create a conda environment copy and paste the following commands into the terminal one by one *****doesn't work***:
 
@@ -41,6 +45,8 @@ To create a conda environment copy and paste the following commands into the ter
 conda create -n qmind_slr python=3.10.6 tensorflow numpy pandas scipy scikit-learn matplotlib seaborn opencv pip
 conda activate qmind_slr
 pip install mediapipe
+pip install skl2onnx
+pip install onnxruntime
 ```
 
 ### Repository Organization
