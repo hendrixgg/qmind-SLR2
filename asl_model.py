@@ -5,7 +5,6 @@ import cv2
 import pickle
 from process_image import rescale_image, crop_square
 import sklearn
-from sklearn.preprocessing import LabelBinarizer
 import mediapipe as mp
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
@@ -42,11 +41,11 @@ class Model():
             # input not determined
             print("model input not defined")
         elif len(self.input_shape) == 1:
+            self.model_input_type = MODEL_INPUT_TYPE.MP_LANDMARKS
+        else:
             self.model_input_type = MODEL_INPUT_TYPE.IMAGE
             # remove channel dimesion, assuming grayscale
             self.input_shape = self.input_shape[:-1]
-        else:
-            self.model_input_type = MODEL_INPUT_TYPE.MP_LANDMARKS
 
         # data from last cropped image
         self.cropped = None
